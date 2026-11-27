@@ -649,6 +649,11 @@ window.XIYOU_DATA = {
     { chapter: 49, who: "tang",  what: "被灵感大王摄进河底水宅", why: "他先踏上冰面，冰破落水" },
     { chapter: 65, who: "wukong", what: "被合在金铙里", why: "他先一步进小雷音寺，被那假佛祖连人扣进铙内" },
     { chapter: 82, who: "tang",  what: "被地涌夫人摄进无底洞", why: "他在镇海寺病了几日，出寺就被摄走" },
+    /* 独立行动的另两处：白龙马现形出战、师兄弟三人同去豹头山 */
+    { chapter: 30, who: "bailong", what: "化宫女夜战黄袍怪", why: "师父被变成虎，八戒又败了，只剩他一匹马" },
+    { chapter: 89, who: "wukong", what: "同去豹头山计闹", why: "三人的兵器被黄狮精偷去设宴，师父留在城里" },
+    { chapter: 89, who: "bajie",   what: "同去豹头山计闹", why: "钉钯被偷的正是他那一柄" },
+    { chapter: 89, who: "shaseng", what: "同去豹头山计闹", why: "金木土三人同去，只留师父与白马在城中" },
   ],
 
   /* 纪年：全书只有少数几处年月可考，别的回目只有「次日」「又行多时」一类的过渡。

@@ -45,3 +45,4 @@
 | 038 | 2026-11-27 12:58 | 纪年层走 A+C：两处硬锚点 + 小说/史实双轨对照，末端锚点右对齐，关于弹窗补「回序轴」并订正十七年 | assets/js/data.js、assets/js/app.js、assets/css/style.css、index.html、docs/* | U-038-01 |
 | 039 | 2026-11-27 13:26 | 逐回在场名单：新增 away（八戒巡山/沙僧讨行李/唐僧化斋），详情卡「分期」行，分期者不计入同行 | assets/js/data.js、assets/js/app.js、assets/css/style.css、index.html、docs/* | U-039-01/02/03 |
 | 040 | 2026-11-27 13:40 | 逐回在场名单（续）：被摄走五条（40/43/49/65/82）+ 纸人淡态 | assets/js/data.js、assets/js/app.js、assets/css/style.css、index.html、docs/* | U-040-01 |
+| 041 | 2026-11-27 13:58 | 三人核对（八戒/沙僧/白龙马）：入队回与在场区间确认，补第 30 回白龙马、第 89 回师兄弟三人同去 | assets/js/data.js、index.html、docs/* | U-041-01 |
