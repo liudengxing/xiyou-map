@@ -19,6 +19,13 @@
 - 不回退：`cards 217`（目标 180–250）、`clips []`、`buildMs 464ms`、`walkPath 3/3`；版本 `props.js?v=2`、`scene.js?v=51`。
 - 仍**无肉眼判读**（`bcdp_screenshot`/`read_image` 只回元数据），未做 A/B 盲评。见 `docs/ITERATIONS/046-foreground-props.md`。
 
+### 第 53 轮（2026-11-27）：场景小坑收口（Q6）
+
+- `scenes/huoyan/scene.js`：`const EMBED = /[?&]embed=1(&|$)/.test(location.search)` → 命中即把 `#hint` 设 `hidden`；`window.__huoyan` 生产入口只留 `{ dialogOpen(), closeDialog() }`，`people/openPerson/dialog/isFrozen/props` 移进 `if (H.flags.TEST)`。
+- `assets/js/app.js`：新增 `isSceneId(id)`（遍历 `SCENE_STATIONS` 的值）；`readHash` 的 `q.scene` 与 `openScene(id)` 首行都过白名单；Esc 改读 `api.dialogOpen()`（不再直接摸 `api.dialog.isOpen()`）。
+- 验收：`?embed=1` 下 `hint.hidden true`、钩子 2 个键、`cards 198 / clips 0`；`?test` 下提示条可见、钩子 7 个键、`openPerson` 开后 `dialogOpen() true`、`closeDialog()` 后 `false`；主站 `#scene=nosuch` 不建 iframe（hash 回落 `#s=5`）；`#scene=huoyan` 开在 `scenes/huoyan/index.html?embed=1`、子页 `ready true`，派发 `Escape` 后场景收起、`body.scene-open` 撤掉。
+- 版本：`scene.js?v=63`、`app.js?v=54`。`check-all` 4 项通过。
+
 ### 第 52 轮（2026-11-27）：芭蕉洞箱折 + 切口描边（Q5）
 
 - 洞口由「暗纸 + 挖洞立面 + 顶边」三层平卡，改成**往洞里退的四层收口**：`arch × 0.66` 实心暗纸（z −19.9）→ `× 0.84` 挖 `× 0.66`（z −19.45）→ `× 0.98` 挖 `× 0.84`（z −19.05）→ 立面 `caveFace` 挖 `arch`（z −18.6）。

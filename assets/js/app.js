@@ -1018,8 +1018,15 @@
     }, 580);
   }
 
+  // 场景 id 白名单：只有登记在 SCENE_STATIONS 里的站才可能落到真实文件。
+  // 深链手写 `#scene=nosuch` 或详情卡按钮被改错时，这里直接挡掉，不去加载一个 404 的 iframe（第 53 轮 Q6）。
+  function isSceneId(id) {
+    for (var k in SCENE_STATIONS) if (SCENE_STATIONS[k] === id) return true;
+    return false;
+  }
+
   function openScene(id, fromEl) {
-    if (!id) return;
+    if (!id || !isSceneId(id)) return;
     if (!sceneModal) {
       sceneModal = $("#scene-modal");
       sceneFrame = $("#scene-frame");
@@ -1036,8 +1043,10 @@
         try {
           sceneIframe.contentDocument.addEventListener("keydown", function (ev) {
             if (ev.key !== "Escape") return;
+            // 与场景的最小契约：只问「纸片对话开着吗」。场景那边生产入口只暴露这两个函数，
+            // 调试用的 people / props 等只在 ?test 下存在（第 53 轮 Q6）。
             var api = sceneIframe.contentWindow.__huoyan;
-            if (api && api.dialog && api.dialog.isOpen()) return;
+            if (api && typeof api.dialogOpen === "function" && api.dialogOpen()) return;
             closeScene();
           });
         } catch (e) { /* 子文档还没就绪：下次 load 再说 */ }
@@ -1483,7 +1492,7 @@
     if (q.base === "modern") S.base = "modern";
     if (q.pro === "0") S.showPrologue = false;
     if (q.c && charById(q.c)) S.focusChar = q.c;
-    if (q.scene) S.sceneWant = q.scene;
+    if (q.scene && isSceneId(q.scene)) S.sceneWant = q.scene;
   }
 
   /* ────────────────────────────────────────────── 构建 / 缩放 */

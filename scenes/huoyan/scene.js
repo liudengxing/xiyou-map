@@ -24,6 +24,14 @@ const C = {
   ink: '#2a241c',
 };
 
+// 嵌在主站 iframe 里时（`?embed=1`）不显示底部提示条：那句话是给单独打开场景的人看的，
+// 在主站的场景窗口里它只是压在画面下沿的一行字（第 53 轮 Q6）。
+const EMBED = /[?&]embed=1(&|$)/.test(location.search);
+if (EMBED) {
+  const hint = document.getElementById('hint');
+  if (hint) hint.hidden = true;
+}
+
 try {
   const H = createHarness({
     ground: C.page,
@@ -451,14 +459,22 @@ try {
   }
 
 
-  // 给验收/后续集成用的小钩子：不开控制台也能让人说话、看状态。
+  // 与主站的最小契约：主站只问一件事——纸片对话有没有开着（决定 Esc 先收对话还是先收场景）。
+  // 调试用的（people / openPerson / dialog / isFrozen / props）只在 `?test` 下挂上去，
+  // 正式入口的 window 上不留一堆能改状态的口子（第 53 轮 Q6）。
   window.__huoyan = {
-    people: people.map((p) => ({ id: p.id, name: p.name, x: p.x, z: p.z, cards: p.hinges.length })),
-    openPerson,
-    dialog,
-    isFrozen: () => frozen,
-    props,
+    dialogOpen: () => (typeof dialog.isOpen === 'function' ? dialog.isOpen() : !!dialog.isOpen),
+    closeDialog: () => dialog.close(),
   };
+  if (H.flags.TEST) {
+    Object.assign(window.__huoyan, {
+      people: people.map((p) => ({ id: p.id, name: p.name, x: p.x, z: p.z, cards: p.hinges.length })),
+      openPerson,
+      dialog,
+      isFrozen: () => frozen,
+      props,
+    });
+  }
 
   H.start();
 } catch (err) {
