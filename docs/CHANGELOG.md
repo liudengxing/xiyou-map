@@ -57,4 +57,5 @@
 | 051 | 2026-11-27 17:22 | 火墙近层降密 44→26（露出焰纸裁切边）+ 焦痕改为按到火墙距离取概率 | scenes/huoyan/scene.js、index.html、docs/* | U-051-01/02/03 |
 | 052 | 2026-11-27 17:31 | 芭蕉洞改箱折：洞内退三层收口 + 立面切口内缘挖出一圈 0.12 描边环 | scenes/huoyan/scene.js、index.html、docs/* | U-052-01/02/03 |
 | 053 | 2026-11-27 17:37 | 场景小坑收口：embed=1 隐藏提示条、深链 scene= 加白名单、调试钩子只在 ?test 暴露 | scenes/huoyan/scene.js、scenes/huoyan/index.html、assets/js/app.js、index.html、docs/* | U-053-01/02/03/04 |
+| 054 | 2026-11-27 17:47 | 逐回在场名单做到回内粒度：chapters 连回、charStatus 判部分离队、纸人三档与「第 58 回归队」 | assets/js/data.js、assets/js/app.js、assets/css/style.css、index.html、docs/* | U-054-01/02/03/04 |
 | 049 | 2026-11-27 16:48 | 卡面纹理分辨率：悟空 40 → 136 px/单位（躯干 28×35 → 115×183），三人 res 0.8 → 2.8；buildMs 649 < 2000、cards 217 不降 | scenes/huoyan/wukong.js、scenes/huoyan/people.js、scenes/huoyan/scene.js、scenes/huoyan/index.html、docs/* | U-049-01/02/03/04 |

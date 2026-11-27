@@ -465,7 +465,8 @@
       var totalW = mates.length * figW + (mates.length - 1) * gap;
       mates.forEach(function (c, i) {
         var x = -totalW / 2 + i * (figW + gap) + figW / 2;
-        var f = g.append("g").attr("class", "fig fig-" + c.id + (c.away ? " fig-away" : ""))
+        var f = g.append("g").attr("class", "fig fig-" + c.id + (c.away ? " fig-away" : "") + (c.part ? " fig-part" : ""))
+          .attr("title", c.part ? c.name + "（第 " + c.back + " 回归队）" : null)
           .attr("transform", "translate(" + (x * U) + "," + (9.4 * U) + ") scale(" + U + ")");
         f.append("path").attr("d", "M-1.75,0 L1.75,0 L1.3,-4.7 L-1.3,-4.7 Z")
           .attr("fill", c.color).attr("stroke", "rgba(42,36,28,.55)").attr("stroke-width", 0.32);
@@ -516,10 +517,41 @@
   }
 
   /* 这一站覆盖的回目里，有没有谁离开队伍去办别的事（D.away 里那几条） */
+  // 一条「分期」可能只落在一回（chapter），也可能连着几回（chapters: [56, 57]）。
+  function awayChapters(a) { return a.chapters || [a.chapter]; }
+
   function awayAt(n) {
     if (n.act !== "journey" || !D.away) return [];
     var s = stationSpan(n);
-    return D.away.filter(function (a) { return a.chapter >= s.a && a.chapter <= s.b; });
+    return D.away.filter(function (a) {
+      return awayChapters(a).some(function (c) { return c >= s.a && c <= s.b; });
+    });
+  }
+
+  /* 回内粒度：这一站跨了几回，某人只在其中一部分回目里不在队里时，既不能整站算「离队」，
+     也不能整站算「同行」。返回 null（全站在队）/ {kind:"away"} / {kind:"part", back}；
+     back = 这站区间里他第一回重新在队的回号（渲染成「第 58 回归队」）。 */
+  function charStatus(n, cid) {
+    if (n.act !== "journey" || !D.away) return null;
+    var s = stationSpan(n);
+    var hit = {};
+    var any = false;
+    D.away.forEach(function (a) {
+      if (a.who !== cid) return;
+      awayChapters(a).forEach(function (c) {
+        if (c >= s.a && c <= s.b) { hit[c] = 1; any = true; }
+      });
+    });
+    if (!any) return null;
+    var caps = Object.keys(hit).map(Number);
+    if (caps.length >= (s.b - s.a + 1)) return { kind: "away" };
+    // 「回归」要落在离队之后：取最后一个离队回之后的第一个在队回（第 57 回单独外出的沙僧 → 第 58 回归队）。
+    // 他若在站内最后一次离队之后就没再回来，退回「站内第一个在队回」，不硬造一个回归回号。
+    var last = Math.max.apply(null, caps);
+    var back = 0;
+    for (var c = last + 1; c <= s.b; c++) { if (!hit[c]) { back = c; break; } }
+    if (!back) { for (var d = s.a; d <= s.b; d++) { if (!hit[d]) { back = d; break; } } }
+    return { kind: "part", back: back };
   }
 
   /* 已经入过队、但这一站覆盖的回目里他不在（被逐 / 暂离），详情卡上单独标一笔 */
@@ -534,12 +566,15 @@
 
   function partyOf(n) {
     if (n.act !== "journey") return [];
-    // 这一回单独行动的人照样画出来，但是画淡——人还在，只是不在队伍边上
-    var apart = awayAt(n).map(function (a) { return a.who; });
+    // 这一回单独行动的人照样画出来，但是画淡——人还在，只是不在队伍边上。
+    // 整站不在 = away（淡 + 虚线）；只在站内部分回目不在 = part（淡 + 点线），并带上回归回号。
     return presentAt(n).map(function (c) {
+      var st = charStatus(n, c.id);
       return {
         id: c.id, name: c.short, color: charColors[c.id] || "#d7bd93",
-        away: apart.indexOf(c.id) >= 0
+        away: !!st && st.kind === "away",
+        part: !!st && st.kind === "part",
+        back: st && st.kind === "part" ? st.back : 0
       };
     });
   }
@@ -858,8 +893,16 @@
       var shortOf = {};
       (D.characters || []).forEach(function (c) { shortOf[c.id] = c.short; });
       away = apart.map(function (a) {
-        return '<div class="d-away" title="' + String(a.why || "").replace(/"/g, "") + '">' +
-          "<b>第 " + a.chapter + " 回</b><span>" + (shortOf[a.who] || a.who) + " · " + a.what + "</span></div>";
+        var cs = awayChapters(a);
+        // 回号：单回写「第 57 回」，连回写「第 56 – 57 回」
+        var tag = cs.length > 1 ? ("第 " + cs[0] + " – " + cs[cs.length - 1] + " 回") : ("第 " + cs[0] + " 回");
+        // 只在这一站一部分回目里离队的，补一句他哪一回回来
+        var st = charStatus(n, a.who);
+        var part = !!st && st.kind === "part";
+        var tail = (part && st.back) ? "（第 " + st.back + " 回归队）" : "";
+        return '<div class="d-away' + (part ? " d-away-part" : "") + '" title="' +
+          String(a.why || "").replace(/"/g, "") + '">' +
+          "<b>" + tag + "</b><span>" + (shortOf[a.who] || a.who) + " · " + a.what + tail + "</span></div>";
       }).join("");
     }
     // 同行：逐回名单里此刻在队伍里的人；被逐/暂离的单独标一笔，免得读者以为漏了谁。

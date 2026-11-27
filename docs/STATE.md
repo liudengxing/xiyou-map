@@ -19,6 +19,14 @@
 - 不回退：`cards 217`（目标 180–250）、`clips []`、`buildMs 464ms`、`walkPath 3/3`；版本 `props.js?v=2`、`scene.js?v=51`。
 - 仍**无肉眼判读**（`bcdp_screenshot`/`read_image` 只回元数据），未做 A/B 盲评。见 `docs/ITERATIONS/046-foreground-props.md`。
 
+### 第 54 轮（2026-11-27）：逐回在场名单做到回内粒度（Q7）
+
+- `assets/js/data.js`：`away` 支持 `chapter`（单回）与 `chapters: [a,b]`（连回）；新增「第 56–57 回悟空被逐（真身去落伽山）」「第 43 回八戒与唐僧同被鼍龙摄走」两条；`away` 14 条。
+- `assets/js/app.js`：`awayChapters()`、`awayAt()` 改「任一回落在站内」；新增 `charStatus(n,cid)` 返回 `null / {kind:"away"} / {kind:"part", back}`；`partyOf()` 带 `away/part/back`；纸人三档 `fig / fig-away / fig-part`（`.62` 透明度 + 点线）；分期行连回写「第 56 – 57 回」、部分离队补「（第 58 回归队）」。回归回号取「最后一个离队回之后的第一个在队回」（首版取站内第一个在队回，把沙僧误标成第 56 回归队，已修）。
+- 实测：`#s=28` 真假美猴王 → 两条分期行（沙僧第 57 回、悟空第 56–57 回，都标「第 58 回归队」）、同行只剩唐僧/白龙马/八戒、纸人 `fig-part`；`#s=22` 黑水河 → 唐僧与八戒两条 `fig-away`（整站）；`#s=40` 灭法国 → 无分期行、五人全实。
+- 第 76 回「八戒/沙僧是否同被擒」：回目只能读出「木母（八戒）在这一回有戏」，**依据不足，标存疑不写入**。
+- 版本：`data.js?v=55`、`app.js?v=56`、`style.css?v=54`。`check-all` 4 项通过。
+
 ### 第 53 轮（2026-11-27）：场景小坑收口（Q6）
 
 - `scenes/huoyan/scene.js`：`const EMBED = /[?&]embed=1(&|$)/.test(location.search)` → 命中即把 `#hint` 设 `hidden`；`window.__huoyan` 生产入口只留 `{ dialogOpen(), closeDialog() }`，`people/openPerson/dialog/isFrozen/props` 移进 `if (H.flags.TEST)`。
