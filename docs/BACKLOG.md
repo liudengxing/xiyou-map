@@ -241,6 +241,8 @@
   - 实测：`lumaP50 0.765→0.712` ✅、`toothRms 0.0098→0.0106` ✅（两项回门限内，WARN 6→4）；`flatPct 98.5→95.9`、`printDetail 0.002→0.003`、`localContrast 0.019→0.022`、`barePct 98.4→98.3` 仍在外。不回退：`cards 151 / clips [] / buildMs 442`、`walkPath 3/3`、`E` 开牛魔王 `1/3` 关后 `frozen false`。
   - 结论（写进 036）：`printDetail` 量的是**清晰带边缘密度**（`mean(梯度>0.10)`），荒漠空地面靠印纹顶不到 0.06；且截图 1256 宽被 `measure` 重采样到 1600，1 px 细砂会糊掉——母题必须 ≥2 px 或按 1600 出图。
   - 遗留：纸件本身（11 张悟空卡 / 18 张人物卡 / 火墙 120 片 / 洞 3 层）仍未印任何纹样；`printDetail`/`localContrast`/`barePct` 需靠立更多纸件（见 P5-9）；无肉眼判读、无 A/B。详见 036。
+- [x] **P5-4b 按设定图重做悟空纸偶**（第 42 轮 U-042-01）✅ 11 卡 → 16 卡、配色换暖红褐族、`clips []`；**上色成像未验证**（图像通道只回元数据），形体像不像需用户看图定。
+  - 遗留：卡面纹理仅 28×35 px（`ppu 22` 量级），1.8px 细节线在纹理里就糊了；若要做特写需抬卡的 `res`。
 - [ ] **P5-9 前景纸件（清晰带里的成组体块）**（25 min）：在 sharp band（主角周围、z ∈ [-16, 8]）立 30–50 片不同的小纸件——纸石（2–4 片叠高）、枯草簇（3–5 根细条）、断旗杆（杆 + 破布）、骨片/干柴堆；成组摆放、组间留空（`paper-ui.md` 的「groups of 4–8, low fillers between」）。验收：`printDetail ≥ 0.06` 或给出「荒漠场景不该套这条门限」的书面结论 + `--ranges` 剪一份荒漠 profile；`cards` 进 180–250、`clips()` 空、`buildMs < 5s`、`walk.solid` 不挡主路径（`walkPath 3/3` 仍过）。
 - [ ] **P4-24 主站 `file://` 双击可开**（25 min，需改 `assets/`）：把 `assets/vendor/{land,countries}-110m.json` 包成 `assets/vendor/geo-inline.js`（`window.__LAND` / `window.__COUNTRIES`），`loadGeodata()` 优先读全局变量、缺了再 `fetch`；`index.html` 加一行 `<script src="assets/vendor/geo-inline.js">`。验收：`file://` 打开有底图、48 图钉、控制台无 CORS 报错；http 下与现在等价（`check-all` 3 项仍通过）。
 - [ ] **P4-25 给 `capture.py` 补不依赖 Playwright 的路径**（15 min）：本机 `python` 无 playwright，`scripts/papercraft/capture.py` 跑不起来。加 `--from-dir` 模式（读现有截图，只做裁切/并排/量化），`ab_sheet.py` 也才有输入。验收：`capture.py --help` 有该参数，给 `.tmp/r35-overview.png` 能出一张并排图。

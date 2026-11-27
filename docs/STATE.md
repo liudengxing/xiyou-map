@@ -3,6 +3,12 @@
 > 每轮迭代前先读本文，迭代后必须更新。字段：轮次 / 交付物 / 已知问题 / 环境。
 
 ## 迭代记录
+### 第 42 轮（U-042-01/02/03）按设定图重做悟空纸偶：11 卡 → 16 卡
+- 配色改设定图量化所得那族：`deep #6d2c15 / ember #b93d20 / emberLit #cf4423 / ochre #c17036 / ochreL #dc9a6e / gold #b8934a / face #f0d3ae`；设定图全无蓝绿，旧版石绿靛青已去。
+- 结构 16 卡：躯干、躯干侧、头、头侧、冠、鬓毛×2、披膊×2、臂×2、腿×2、腰带、战裙、金箍棒；深度表 staff −0.54 … crown 0.26。
+- `clips()` 首版 5 对互穿 → 头 z 0.16、披膊下移 y 2.14–2.40 与头 y 不相交、战裙顶 1.32 与腰带 y 分开 → `clips []`。
+- 实测（1256×774）：`ready true / cards 156 / buildMs 438–473 / clips []`；脚底 0.000（髋枢轴 1.06→1.04）；按住 W 时 `hip-l −0.045 / hip-r 0.067 / shoulder-l −0.054 / shoulder-r 0.054`（反相）。`scene.js?v=41`、`wukong.js?v=5`。
+- **未验证**：上色后实际颜色不可判读（截图与纹理采样都对不上 `P.fill` 的色，`material` 为 3 件数组且 `[0]` 只有 28×35 px），形体是否像设定图须用户看 `.tmp/r42-wukong-close.png`。见 `docs/ITERATIONS/042-wukong-sheet-v2.md`。
 ### 第 41 轮（U-041-01）三人核对：八戒 / 沙僧 / 白龙马
 - 入队回核实：八戒第 19 回（云栈洞悟空收八戒）、沙僧第 22 回（木叉奉法收悟净）、白龙马第 15 回（鹰愁涧意马缰绳）；三人 present 各一段，无整段离队。
 - 43 站逐站跑数：人数 1→5 严格随入队回递增，无「早于入队」出现。
@@ -132,7 +138,7 @@
 
 ## 环境约束（踩过的坑）
 
-- 本项目**不是 git 仓库**：回滚靠 U-ID + 文件级说明，不能 `git revert`。
+- 本项目已是 git 仓库（remote `https://github.com/liudengxing/xiyou-map.git`），回滚仍优先用 U-ID + 前向回退，`git checkout` 只作兜底。
 - `ops_bash` 在本机 workspace-write 下必失败（`SetNamedSecurityInfoW failed (Win32 5)`），凡 bash 需按次 `danger-full-access`。
 - 预览：`python -m http.server 8123 --bind 127.0.0.1`（后台 job，会吊住），页面 `http://127.0.0.1:8123/`。
 - 浏览器 ego-browser 视口固定 2552×1274 不可改，只能靠 `.tmp/frame*.html` 的 iframe 包装造 1440/1200/390 等真实版式；截图用 `bcdp_screenshot({selector:"iframe"})`。
