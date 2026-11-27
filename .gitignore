@@ -1,0 +1,12 @@
+# 预览用的临时视口包装页与截图（不入库）
+.tmp/
+.acl-diag/
+.dsh-test.txt
+
+# 打包产物：本地校验用，入库会变成过期副本
+西游记时序图-小米 vibeCoding 大赛/
+*.zip
+
+node_modules/
+.DS_Store
+Thumbs.db

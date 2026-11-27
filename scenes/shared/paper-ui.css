@@ -1,0 +1,146 @@
+/* scenes/shared/paper-ui.css —— 纸片对话框：卡纸、双细墨框、衬线字。
+   配色与 spec PALETTE 同族（禁纯白、禁现代圆角卡片）。纤维用 SVG 噪声贴图，只压暗 3–6%。 */
+:root {
+  --pd-ink: #2a241c;
+  --pd-ink-soft: rgba(42, 36, 28, .72);
+  --pd-page: #f3e7cd;
+  --pd-core: #fbf3df;
+  --pd-edge: #d2bd98;
+  --pd-accent: #b03a2e;
+  --pd-fibre: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9 .6' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .24 0 0 0 0 .15 .4 0 0 0 -.16'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
+}
+
+.paper-dialog {
+  position: fixed;
+  left: 50%;
+  bottom: 26px;
+  width: min(620px, calc(100vw - 32px));
+  transform: translate(-50%, 0);
+  padding: 18px 26px 14px;
+  color: var(--pd-ink);
+  font: 15px/1.75 Georgia, "Noto Serif SC", "Songti SC", serif;
+  background: var(--pd-fibre), var(--pd-core);
+  /* 双细墨框：外一道深、内一道浅，像卡纸上两次描的线 */
+  border: 1px solid rgba(74, 44, 34, .82);
+  outline: 1px solid rgba(74, 44, 34, .3);
+  outline-offset: -5px;
+  box-shadow: 0 2px 0 var(--pd-edge), 2px 3px 2px rgba(74, 44, 34, .4), 10px 14px 22px rgba(74, 44, 34, .22);
+  /* 从下方抽出一张纸：0.34s 的纸上抬曲线，落定时只有很小的回弹 */
+  animation: pd-sheet-in .34s cubic-bezier(.4, .02, .3, 1) both;
+  z-index: 20;
+}
+.paper-dialog[hidden] { display: none; }
+
+.pd-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid rgba(74, 44, 34, .28);
+}
+.pd-name { font-size: 19px; font-weight: 600; letter-spacing: .06em; }
+.pd-role { font-size: 12px; letter-spacing: .12em; color: var(--pd-ink-soft); }
+.pd-sample {
+  margin-left: auto;
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: var(--pd-accent);
+  border: 1px solid rgba(176, 58, 46, .55);
+  padding: 1px 6px;
+  white-space: nowrap;
+}
+
+.pd-text { margin: 0; min-height: 3.4em; white-space: pre-wrap; }
+.pd-text .cursor {
+  display: inline-block;
+  width: .5em;
+  border-bottom: 1px solid var(--pd-ink-soft);
+  transform: translateY(-2px);
+}
+
+.pd-foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(74, 44, 34, .18);
+}
+.pd-hop { font-size: 12px; letter-spacing: .1em; color: var(--pd-ink-soft); }
+.pd-more {
+  margin-left: auto;
+  font: 13px/1 Georgia, serif;
+  letter-spacing: .14em;
+  color: var(--pd-ink);
+  background: none;
+  border: 0;
+  border-bottom: 1px solid rgba(74, 44, 34, .45);
+  padding: 3px 2px;
+  cursor: pointer;
+}
+.pd-more:hover { border-bottom-color: var(--pd-ink); }
+
+@keyframes pd-sheet-in {
+  from { transform: translate(-50%, 26px); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) { .paper-dialog { animation: none; } }
+@media (max-width: 520px) {
+  .paper-dialog { bottom: 12px; padding: 14px 18px 12px; width: calc(100vw - 20px); font-size: 14px; }
+  .pd-name { font-size: 17px; }
+  .pd-role { display: none; }
+}
+
+/* ── 头顶名牌（网游式 id 展示）─────────────────────────────
+   名字本身不是纸件——人物是纸的，名牌是一张「贴在人头顶的小纸签」：
+   一层纸色、一道细墨框、底下一枚小三角指着人。整层不接收指针事件，
+   免得挡住所站的那块地面（点地面还要走路）。 */
+.pd-tags {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none;
+  overflow: hidden;
+}
+.pd-tag {
+  position: fixed;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -100%);
+  padding: 2px 7px 3px;
+  font-family: "Songti SC", "STKaiti", "Noto Serif SC", serif;
+  font-size: 11px;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  color: var(--pd-ink, #2a241c);
+  background: rgba(251, 243, 223, 0.9);
+  border: 1px solid rgba(74, 44, 34, 0.6);
+  box-shadow: 0 1px 0 rgba(210, 189, 152, 0.9);
+  opacity: 0.95;
+  transition: opacity 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+.pd-tag::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -4px;
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  transform: rotate(45deg);
+  background: rgba(251, 243, 223, 0.9);
+  border-right: 1px solid rgba(74, 44, 34, 0.6);
+  border-bottom: 1px solid rgba(74, 44, 34, 0.6);
+}
+/* 走近到能说话的距离：字与框同时转朱砂，是「可以说话了」的唯一提示 */
+.pd-tag.near {
+  color: var(--pd-accent, #b03a2e);
+  border-color: rgba(176, 58, 46, 0.75);
+}
+.pd-tag.near::after { border-color: rgba(176, 58, 46, 0.75); }
+/* 对话开着：别人退成淡淡的影，主角的名牌也收起来（是主角在说话，不必标） */
+.pd-tag.off { opacity: 0.18; }
+.pd-tag.hero { background: transparent; border: none; box-shadow: none; }
+.pd-tag.hero::after { display: none; }

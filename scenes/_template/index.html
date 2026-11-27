@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>纸模场景 · 模板</title>
+<link rel="icon" href="data:,">
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #d9c9a6; }
+  canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+  .hint { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%);
+    font: italic 13px/1.3 Georgia, "Noto Serif SC", serif; color: #fff6e4; opacity: .8;
+    letter-spacing: .03em; pointer-events: none; text-shadow: 0 1px 3px #5a3a20; }
+  .fallback { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    padding: 24px; text-align: center; font: 15px/1.7 Georgia, "Noto Serif SC", serif;
+    color: #2a241c; background: #f3e7cd; }
+  .fallback[hidden] { display: none; }
+</style>
+<!-- 三样东西全部本地：three 与 papercraft 运行时都在 ../vendor/，不开 CDN。
+     papercraft/ 指向含 lib/ 的目录，harness.js 里 import 的 papercraft/lib/... 才会解析到本地副本。
+     复制模板到 scenes/<新场景>/ 时，这一段的相对路径不用改（同层目录）。 -->
+<script type="importmap">{ "imports": {
+  "three": "../vendor/three.module.js",
+  "papercraft/": "../vendor/papercraft/"
+} }</script>
+</head>
+<body>
+<div class="hint" id="hint">arrows / WASD 走动 · 点地面走过去 · 纸模模板（改这里做下一个场景）</div>
+<div class="fallback" id="fallback" hidden>纸模场景需要 WebGL：换一个支持 WebGL 的浏览器，或在主站里继续看舆图。</div>
+<script type="module" src="./scene.js"></script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>西游时序 · 取经路线交互舆图</title>
+<meta name="description" content="《西游记》一百回的时序与取经路线交互舆图：西行四十三站、九九八十一难、玄奘实路对照。">
+<link rel="stylesheet" href="assets/css/style.css?v=47">
+</head>
+<body>
+
+<div id="stage">
+
+  <svg id="map" role="img" aria-label="西游记取经路线示意图"></svg>
+
+  <svg class="grain" aria-hidden="true">
+    <filter id="grainf">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+    <rect width="100%" height="100%" filter="url(#grainf)"/>
+  </svg>
+
+  <header class="masthead">
+    <div class="seal">西<br>游</div>
+    <div>
+      <h1>西游时序</h1>
+      <p class="sub">取经路线交互舆图</p>
+      <p class="meta">贞观十三年长安启程<i>·</i>十万八千里<i>·</i>九九八十一难</p>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <button class="tbtn" data-act="trip">行程表</button>
+    <button class="tbtn" data-act="nan">八十一难</button>
+    <button class="tbtn" data-act="base">今图</button>
+    <button class="tbtn" data-act="real">玄奘实路</button>
+    <button class="tbtn on ink" data-act="era">纪年</button>
+    <button class="tbtn on ink" data-act="prologue">前传</button>
+    <button class="tbtn" data-act="about">关于</button>
+    <button class="tbtn" data-act="reset">复位</button>
+  </div>
+
+  <div class="search">
+    <input id="q" type="text" placeholder="搜地名 · 妖怪 · 回目 / 输回目号直达" autocomplete="off" spellcheck="false">
+    <div class="search-results" id="qres"></div>
+  </div>
+
+  <div class="chars" id="chars"></div>
+
+  <div class="legend">
+    <div class="lg-row"><span class="lg-line" style="border-color:#b03a2e"></span>已行之路</div>
+    <div class="lg-row"><span class="lg-line dash" style="border-color:rgba(140,43,34,.5)"></span>未行之途</div>
+    <div class="lg-row"><span class="lg-line dash" style="border-color:rgba(63,107,138,.7)"></span>玄奘实路 / 前传</div>
+    <div class="lg-row"><span class="lg-line" style="border-color:#2f6b4a"></span>所选人物</div>
+  </div>
+
+  <aside class="detail" id="detail"></aside>
+
+  <div class="timeline">
+    <div class="tl-inner">
+      <button class="tl-play" aria-label="播放">▶</button>
+      <div class="tl-read">
+        <div class="r1" id="r1">第 12 回</div>
+        <div class="r2" id="r2"></div>
+      </div>
+      <div class="tl-track" id="tl-track">
+        <div class="tl-rail"></div>
+        <div class="tl-rail-done" id="tl-rail-done" style="width:0%"></div>
+        <div class="tl-ticks" id="tl-ticks"></div>
+        <div class="tl-era" id="tl-era"></div>
+        <div class="tl-keys" id="tl-keys"></div>
+        <div class="tl-handle" id="tl-handle" style="left:10%"></div>
+      </div>
+      <div class="tl-nan">
+        <div class="n1" id="n1">第 0 难 / 81</div>
+        <div class="n2" id="n2"></div>
+      </div>
+    </div>
+    <div class="tl-hint">← → 换站　空格 播放　/ 搜索　点图钉可放大</div>
+  </div>
+
+  <div class="drawer" id="drawer-trip">
+    <div class="drawer-head">
+      <h2>行程表</h2>
+      <div style="display:flex;align-items:baseline;gap:12px">
+        <span class="cnt">四十八站</span>
+        <button class="close" data-close aria-label="关闭">✕</button>
+      </div>
+    </div>
+    <div class="drawer-body" id="trip-body"></div>
+  </div>
+
+  <div class="drawer right" id="drawer-nan">
+    <div class="drawer-head">
+      <h2>八十一难</h2>
+      <div style="display:flex;align-items:baseline;gap:12px">
+        <span class="cnt">第九十九回难簿</span>
+        <button class="close" data-close aria-label="关闭">✕</button>
+      </div>
+    </div>
+    <div class="drawer-body">
+      <div class="nan-wrap">
+        <div class="nan-hint">悬停看难名，点击跳到该难所在的一站。第八十一难为取经归途所补，不在难簿八十条内。</div>
+        <div class="nan-prog">
+          <div class="np-line"><span id="nan-prog-n">已渡 0 / 81</span><span class="np-key"><i class="k-done"></i>已渡<i class="k-todo"></i>未至<i class="k-cur"></i>当前</span></div>
+          <div class="np-bar"><i id="nan-prog-bar"></i></div>
+        </div>
+        <div class="nan-grid" id="nan-grid"></div>
+        <div class="nan-detail" id="nan-detail">
+          <div class="t">九九归真</div>
+          <div class="m">第九十九回</div>
+          <div class="b">唐僧师徒取经归途，八金刚驾云送行，路过通天河，老鼋问寿数不得，淬水沉经——此难为菩萨临时所补，凑成九九之数。</div>
+        </div>
+        <div class="nan-foot">难簿录于第九十九回，八十一难名目依原文次序；末一难受于通天河，菩萨临时补入。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="about">
+    <div class="modal-card">
+      <button class="close" data-close aria-label="关闭">✕</button>
+      <h2>《西游记》有地图吗</h2>
+      <div class="lead">关于这张图的来历</div>
+
+      <p><b>原书没有附舆图。</b>《西游记》现存明刻本只有插图，没有随文的路线图。书中的地理是“虚实相参”：长安、巩州、河州卫、火焰山之类有实地可考，乌鸡国、车迟国、狮驼国、朱紫国之类全是虚构国度，作者也并不追求方位与里程的自洽。</p>
+
+      <p><b>今天能见到的“取经路线图”，都是后人画的。</b>清代绘本、民国通俗读物、近几十年的连环画与旅游图册各有各的画法，站点顺序基本照章回走，位置则大半是示意。这张图沿用同样的办法：按原书先后排出一条西行脊线，虚构地名一律标注“示意位置”，并把可考的今地对出来。</p>
+
+      <p>数字也能说明这一点：图上四十八站里，能大致对上当今实地的只有<b>八站</b>（长安、法门寺、巩州、河州卫、通天河、火焰山、天竺国、花果山——后两站只是“后世多比定”，不是说书人写明的）；<b>十五站</b>是书里编出来的境域与国度（方寸山、东海、幽冥界、天庭，外加宝象、乌鸡、车迟、西梁女、祭赛、朱紫、比丘、灭法、凤仙、玉华、金平十一国）；<b>二十四站</b>是没有实地可指的荒山、涧、岭与洞府；余下灵山另有出典，是那烂陀所在的灵鹫山，却也不是这张图能定死的。换句话说，图上八成以上的点，任何一张“取经图”都只能画个大概。</p>
+
+      <p><b>真实的西行路线另有其人。</b>唐玄奘于贞观元年（一说是三年）私自出关，经河西走廊、高昌、中亚碎叶、铁门，越大雪山入印度，在那烂陀寺留学五年，往返约十七年（贞观三年出、十九年归）。这一路记在《大唐西域记》与《大慈恩寺三藏法师传》里，是实打实的地理。点击右上「玄奘实路」，可以看到那条线与此图的差别——它比小说走得远得多。</p>
+
+      <p><b>轴是回序轴，不是历法轴。</b>全书可考的年月只有两处：第十三回「贞观十三年九月望前三日」出长安、第一百回「经过了一十四遍寒暑」抵灵山；其余回目多是「次日」「又行多时」。所以时间轴按回目先后排，纪年层也只标这两处，并在旁边平行标出史实玄奘的一程（贞观三年出、十九年归，约十七年）。小说写「今已贞观二十七年」，而太宗崩于贞观二十三年——这个年号史无此年，两条线不可互相换算。</p>
+
+      <hr>
+
+      <p style="font-size:11.5px;color:#6b5c48">数据：回目一百回、八十一难名目取自第九十九回难簿原文；站点定位为示意，非测绘。底图为 Natural Earth 110m 简化地物（public domain）；交互仿“江山时序”一路，用 d3 v7 手绘。</p>
+    </div>
+  </div>
+
+  <!-- P5-6 纸模场景。iframe 在第一次进入时才建 src：进场景之前不请求 three，
+       主站「双击即开」的轻量不被场景拖累。 -->
+  <div class="scene-modal" id="scene-modal" hidden>
+    <div class="scene-sheet" role="dialog" aria-modal="true" aria-label="火焰山纸模场景">
+      <div class="scene-head">
+        <div class="scene-title">火焰山 · 三调芭蕉扇<span>纸模场景 · 示例</span></div>
+        <button class="close" id="scene-close" aria-label="关闭纸模场景">✕</button>
+      </div>
+      <div class="scene-frame" id="scene-frame"></div>
+      <div class="scene-note">arrows / WASD 走动 · 点地面走过去 · 点人（或 E）说话 · Esc 收起</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="assets/vendor/d3.min.js"></script>
+<script src="assets/vendor/topojson-client.min.js"></script>
+<script src="assets/js/data.js?v=47"></script>
+<script src="assets/js/app.js?v=47"></script>
+</body>
+</html>
