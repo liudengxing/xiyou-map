@@ -19,6 +19,15 @@
 - 不回退：`cards 217`（目标 180–250）、`clips []`、`buildMs 464ms`、`walkPath 3/3`；版本 `props.js?v=2`、`scene.js?v=51`。
 - 仍**无肉眼判读**（`bcdp_screenshot`/`read_image` 只回元数据），未做 A/B 盲评。见 `docs/ITERATIONS/046-foreground-props.md`。
 
+### 第 50 轮（2026-11-27）：纸件印纹样（Q2）
+
+- 新建 `scenes/huoyan/print.js?v=5`：`printCard(P, C, style)` / `withPrint(paint, C, style)`，五类母题走 paperkit-2d 的 `P.marks()` —— `cloth`（hatch+dot，悟空躯干/战裙）、`hide`（leaf+tick，头面鬓毛）、`metal`（rivet+stripe，金箍/腰带/棒）、`wall`（dab+wave，洞壁/芭蕉叶/纸灯）、`flame`（wave+dab，火墙三层）。
+- 接入：`wukong.js` 的 `card()`（按部件名选样式）、`people.js` 三人卡、`scene.js` 火墙与芭蕉洞四处。
+- 关键教训：卡面是 234 打印像素/单位、屏幕只有约 41 像素/单位，`size: 0.05U` 与 `width: 2`（打印像素）到屏幕不足 1 px，全被抹平（三轮试验全无效）。改用 `units: true` 给形状单位（0.09–0.11，≈4 屏幕像素）、线宽 6，才读得出。
+- 验收：卡面边缘密度 `0.0734 → 0.1870`（`wukong-torso` 正面 115×183）；`?test` 主角裁框 0.1746 → 0.1760（屏幕只涨 0.0014）；全幅 `printDetail 0.043 / localContrast 0.058` 不变（主角占全幅 <2%）；`clips []`、`cards 217`、`buildMs 586`。
+- 结论：全幅 `printDetail` 推不动人物小卡，Q2 按「卡面密度 + 局部裁框」判，理由写进 `docs/ITERATIONS/050-print-motifs.md`。
+- 版本：`print.js?v=5`、`scene.js?v=60`；`?print=0` 为 A/B 调试开关。
+
 ### 第 49 轮（2026-11-27）：卡面纹理分辨率（Q3，提前到 Q2 之前）
 
 - 原状：悟空 `H.cardOpts(x, z)` 默认 `res=1`、`scale=1` → 40 px/单位，0.84 单位的躯干只有 28×35 px；三人 `scale 0.86–0.95` + `res 0.8` 同样约 28 px。Q2 要求「印花线宽 ≥2 px」，在这个画布上画不出来，故先做 Q3。

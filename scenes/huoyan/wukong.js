@@ -7,6 +7,7 @@
 // docs/PAPERCRAFT-CHARACTER-SPEC.md：每部件一正一侧、四肢枢轴在躯干轮廓之外、两腿不互叠。
 import * as THREE from 'three';
 import { makeCard } from 'papercraft/lib/paperkit-3d.js';
+import { withPrint } from './print.js?v=5';
 
 // 配色取自 角色详设/孙悟空铰链纸模设计图.png 的量化主色（暖红褐 + 纸黄，不含蓝绿）
 const C = {
@@ -64,8 +65,13 @@ export function buildWukong(H, { x = 0, z = 3 } = {}) {
   const opts = () => ({ ...H.cardOpts(x, z, 1, null, CARD_RES), thickness: T, edgeWidth: 0.08 });
 
   /** 造一张卡；pts 用父级局部坐标，dz 是本层相对父级的深度。 */
+  // 卡名 → 印纹样式：毛脸用 hide，甲与袍用 cloth，金箍/腰带/棒用 metal。
+  const STYLE_OF = (name) => (/crown|belt|staff/.test(name) ? 'metal'
+    : /head|ruff/.test(name) ? 'hide'
+      : /pauldron|skirt/.test(name) ? 'cloth' : 'cloth');
+
   const card = (name, pts, paint, dz, parent = body, folds = ['top']) => {
-    const m = makeCard(pts, { ...opts(), paint, folds });
+    const m = makeCard(pts, { ...opts(), paint: withPrint(paint, C, STYLE_OF(name)), folds });
     m.name = name;
     m.position.z = dz;
     m.castShadow = true;

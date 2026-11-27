@@ -9,6 +9,8 @@
 // 位置都落在 walkArea（x −14..14, z −16..8）里、且离火墙（z −28..−22）够远。
 // 台词据第五十九至六十一回情节改写，非原著原文；每句末尾标回目，头上徽标写明「据回目改写」。
 
+import { withPrint } from './print.js?v=5';
+
 const C = {
   page: '#f3e7cd', deep: '#ead8b6', ochre: '#d7bd93', ochreD: '#bfa072',
   burnt: '#8c2b22', ember: '#b03a2e', shadow: '#a0602c', gold: '#b8934a',
@@ -285,7 +287,9 @@ export function buildPeople(H) {
   return PEOPLE.map((p) => {
     const cards = BUILDERS[p.id]();
     const hinges = cards.map((c, i) => {
-      const h = H.popup(c.pts, c.paint, {
+      // 印纹样式：罗刹女/牛魔王/八戒的衣裳与甲用 cloth，金箍棒与钉钯之外的硬件用 metal。
+      const style = c.style || 'cloth';
+      const h = H.popup(c.pts, withPrint(c.paint, C, style), {
         x: p.x,
         z: p.z + c.dz,           // 同一人的卡只差一点点深度，像一叠纸
         scale: p.scale,

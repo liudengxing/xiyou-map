@@ -6,6 +6,7 @@ import { createHarness } from '../vendor/papercraft/harness.js';
 import { buildWukong, HERO_H } from './wukong.js?v=12';
 import { buildPeople } from './people.js?v=4';
 import { buildProps } from './props.js?v=2';
+import { withPrint } from './print.js?v=5';
 import { createDialog } from '../shared/dialog.js?v=2';
 import * as THREE from 'three';
 
@@ -385,7 +386,7 @@ try {
       const x = -row.halfW + t * row.halfW * 2 + (((i * 37) % 11) / 11 - 0.5) * 1.6;
       const jitter = ((i * 37) % 11) / 11;            // 确定性抖动，刷新不跳
       const sc = row.s * (0.72 + jitter * 0.62);
-      H.popup(flamePts, flamePaint, { x, z: row.z + jitter * 1.4, scale: sc, res: row.res, order: 10 + row.z });
+      H.popup(flamePts, withPrint(flamePaint, C, 'flame'), { x, z: row.z + jitter * 1.4, scale: sc, res: row.res, order: 10 + row.z });
     }
   }
 
@@ -393,10 +394,10 @@ try {
   const arch = [[-1.45, 0], [-1.45, 2.05], [-0.95, 2.85], [0, 3.25], [0.95, 2.85], [1.45, 2.05], [1.45, 0]];
   const caveFace = [[-2.6, 0], [2.6, 0], [2.6, 4.3], [-2.6, 4.3]];
   // 洞门后的一张暗纸：透过洞口看到的是幽深，不是背景色
-  H.popup(arch, (P) => { P.fill(C.ink); P.innerShade('#000000', { alpha: 0.5, blurPx: 6 }); },
+  H.popup(arch, withPrint((P) => { P.fill(C.ink); P.innerShade('#000000', { alpha: 0.5, blurPx: 6 }); }, C, 'wall'),
     { x: 22, z: -19.0, yaw: 0, scale: 1.0 });
   // 洞口立面（赭石卡纸，门洞位置挖穿）
-  H.popup(caveFace, (P) => { P.fill(C.ochre); P.innerShade(C.ochreD, { alpha: 0.4, blurPx: 10 }); },
+  H.popup(caveFace, withPrint((P) => { P.fill(C.ochre); P.innerShade(C.ochreD, { alpha: 0.4, blurPx: 10 }); }, C, 'wall'),
     { x: 22, z: -18.6, yaw: 0, scale: 1.0, holes: [arch] });
   // 洞顶两道赭深压边：让洞口有厚度，不像一张平贴纸
   H.popup([[-2.6, 4.3], [2.6, 4.3], [2.6, 4.62], [-2.6, 4.62]], (P) => { P.fill(C.ochreD); },
@@ -415,7 +416,7 @@ try {
   // 芭蕉叶：洞旁两片石绿纸叶（spec PALETTE 的 azurite）
   const leaf = [[-1.5, 0.15], [-0.9, 1.5], [0, 2.3], [0.95, 1.45], [1.55, 0.2], [0.5, -0.15], [-0.45, -0.1]];
   for (const [dx, sc] of [[-5.2, 2.2], [5.6, 1.8]]) {
-    H.popup(leaf, (P) => {
+    H.popup(leaf, withPrint((P) => {
       P.fill(C.jade);
       P.g.strokeStyle = 'rgba(42,36,28,0.35)';
       P.g.lineWidth = 2;
@@ -423,7 +424,7 @@ try {
       P.g.moveTo((P.box.x0 + P.box.x1) / 2, P.box.y1 - 4);
       P.g.lineTo((P.box.x0 + P.box.x1) / 2, P.box.y0 + 4);
       P.g.stroke();
-    }, { x: 22 + dx, z: -17.6, yaw: 0, scale: sc });
+    }, C, 'wall'), { x: 22 + dx, z: -17.6, yaw: 0, scale: sc });
   }
 
   // ---- P5-9 前景纸件 ---------------------------------------------------------------
