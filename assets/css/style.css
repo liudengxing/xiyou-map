@@ -18,6 +18,7 @@
   --rule-soft: rgba(90, 70, 45, 0.13);
   /* 平台自带宋体在前、可能未安装的 web 字在后：Windows 落 SimSun，macOS 落 Songti SC。
      "Noto Serif SC" 只在真装了它的机器上出现（第 55 轮 Q8 统一口径，与 scenes/shared/paper-ui.css 一致）。 */
+  --label-fs: 10.5px;
   --serif: "Songti SC", "STSong", "SimSun", "Source Han Serif SC", "Source Han Serif CN", "Noto Serif SC", serif;
   --kai: "STKaiti", "Kaiti SC", "KaiTi", "楷体", "Songti SC", serif;
   --shadow: 0 2px 4px rgba(60, 44, 24, 0.06), 0 14px 40px rgba(60, 44, 24, 0.12);
@@ -277,7 +278,7 @@ body::before {
 .pin:focus .pin-label { fill: var(--cinnabar-deep); font-weight: 700; }
 .pin-label {
   font-family: var(--serif);
-  font-size: calc(10.5px * var(--u, 1));
+  font-size: calc(var(--label-fs, 10.5px) * var(--u, 1));
   letter-spacing: 0.04em;
   fill: rgba(58, 44, 26, 0.9);
   paint-order: stroke;
@@ -1212,6 +1213,14 @@ body::before {
    640×360 实测「随行」条 top 152 与详情卡 top 157 直接叠在一起。这里只做「让开」：
    时间轴压到 84px、卡片底边抬到 96px、「随行」条挪到搜索框之上，腾出连续可用的地图带。 */
 @media (max-height: 480px) {
+  /* 手机横屏 640×360 的地图带只有两百来像素高：字号缩一档，标签才挤得下。
+     JS 的盒模型读的是同一个计算字号（第 56 轮 Q9）。 */
+  :root { --label-fs: 9.6px; }
+  /* 详情卡在横屏里改成左下角一块窄面板：原先是 616×108 横铺，把地图带从中截断，
+     图钉全被挤进 75px 高的一条（第 56 轮实测 y 144–219）。改成 292px 宽后，
+     地图右半边从上到下都能落标签。 */
+  .detail { left: 12px; right: auto; width: 292px; bottom: 96px; max-height: 108px; }
+  .detail.expanded { max-height: 46vh; }
   .timeline { height: 84px; padding: 6px 12px 8px; }
   .detail { bottom: 96px; }
   /* 40vh = 144px 时展开态顶到 y120，会压住搜索框（底 139）；30vh = 108px，顶到 y156。 */

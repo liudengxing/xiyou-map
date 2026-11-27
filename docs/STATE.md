@@ -19,6 +19,13 @@
 - 不回退：`cards 217`（目标 180–250）、`clips []`、`buildMs 464ms`、`walkPath 3/3`；版本 `props.js?v=2`、`scene.js?v=51`。
 - 仍**无肉眼判读**（`bcdp_screenshot`/`read_image` 只回元数据），未做 A/B 盲评。见 `docs/ITERATIONS/046-foreground-props.md`。
 
+### 第 56 轮（2026-11-27）：手机横屏地图带（Q9）
+
+- `buildProjection()` 加短屏档（`top 74 / bottom 100`），矮屏详情卡改 292×108 竖卡，`.pin-label` 字号变量化（矮屏 9.6px），
+  `declutter()` 盒模型改读实测字号，新增 `CAND_EXTRA` 十二位与 `pinR` 分档（矮屏 4.6U）。
+- 640×360：地图带 215px、浮层重叠 0、可见标签 **9 → 12**；1440 可见 44、390 可见 13，均无出屏。
+- 「可见标签 ≥20」实测不可达（图钉障碍设为 0 时上限 26，真实规则下 12），已登记 `D-07` 待用户拍板。
+
 ### 第 55 轮（2026-11-27）：中文排版（Q8）
 
 - 纸片 UI 两处字族把平台楷/宋提到 `"Noto Serif SC"` 之前（新增 `--pd-serif` / `--pd-kai`），对话正文改用楷体、名牌仍用宋体；主站 `--serif` 同步调整，3 处硬写字族改 `var(--serif)`。

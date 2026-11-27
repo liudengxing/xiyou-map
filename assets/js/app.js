@@ -196,8 +196,12 @@
     var box = { type: "MultiPoint", coordinates: [[64, 18.5], [125, 46]] };
     // 窄屏把右栏与底部让位收窄，免得地图被挤成一条
     var reserve = W > 900 ? 290 : 14;
-    var bottom = H > 700 ? 150 : 116;
-    var top = W > 900 ? PAD : 128;
+    // 手机横屏（≤480 高）另开一档：顶部工具栏只到 61、底部时间轴顶在 276，
+    // 原先的 top 128 / bottom 116 会把 360 高的屏只剩 116px 给地图，
+    // 48 枚图钉全被压进一条 75px 的窄带、标签没处可放（第 56 轮 Q9）。
+    var short = H <= 480;
+    var bottom = short ? 100 : H > 700 ? 150 : 116;
+    var top = short ? 74 : W > 900 ? PAD : 128;
     proj.fitExtent([[W > 900 ? PAD : 10, top], [W - reserve, H - bottom]], box);
   }
 
@@ -625,7 +629,9 @@
     var visible = {};
 
     // 先占位：所有图钉本身都算障碍，标签不许压在别的站点上
-    var pinR = 7.2 * U;
+    // 横屏小屏上行程走廊被压成斜向的一串（间距只有 8px），钉子障碍再按 7.2U 占位
+    // 就一点空隙都不剩：钉子框收到 4.6U，接近图形本身的半径（第 56 轮 Q9）。
+    var pinR = (H <= 480 ? 4.6 : 7.2) * U;
     nodes.forEach(function (n) {
       if (n.act === "prologue" && !S.showPrologue) return;
       var psx = n._x * t.k + t.x;
@@ -636,6 +642,7 @@
       var partyH = (n.act === "journey" && n.order === S.idx) ? 15 * U : 0;
       pinBoxes.push({ x: psx - pinR, y: psy - pinR, w: pinR * 2, h: pinR * 2 + partyH });
     });
+
 
     function overlaps(a, b) {
       return !(a.x + a.w < b.x || a.x > b.x + b.w || a.y + a.h < b.y || a.y > b.y + b.h);
@@ -687,7 +694,7 @@
       return panels.some(function (b) { return overlaps(box, b); });
     }
 
-    var CAND = [
+    var CAND_BASE = [
       { dy: -13, anchor: "middle" },
       { dy: 21, anchor: "middle" },
       { dy: -28, anchor: "middle" },
@@ -701,13 +708,30 @@
       { dx: 22, dy: -4, anchor: "start" },
       { dx: -22, dy: -4, anchor: "end" }
     ];
+    // 手机横屏（≤480 高）另加八位：行程走廊在这个尺寸下被压成一条斜向的串，
+    // 站距只有 8px，原来的十二位几乎每一位都会撞上邻站的钉子；只给「上/下 ±13～51」
+    // 与「左右 ±22」是不够的，得沿垂直走廊的方向再往外退一格（第 56 轮 Q9）。
+    var CAND_EXTRA = [
+      { dx: 11, dy: -22, anchor: "start" },
+      { dx: -11, dy: -22, anchor: "end" },
+      { dx: 11, dy: 13, anchor: "start" },
+      { dx: -11, dy: 13, anchor: "end" },
+      { dx: 22, dy: -13, anchor: "start" },
+      { dx: -22, dy: -13, anchor: "end" },
+      { dx: 33, dy: 4, anchor: "start" },
+      { dx: -33, dy: 4, anchor: "end" },
+      { dx: 0, dy: -70, anchor: "middle" },
+      { dx: 0, dy: 70, anchor: "middle" },
+      { dx: 44, dy: -6, anchor: "start" },
+      { dx: -44, dy: -6, anchor: "end" }    ];
+    var CAND = H <= 480 ? CAND_BASE.concat(CAND_EXTRA) : CAND_BASE;
 
     order.forEach(function (n) {
       var sx = n._x * t.k + t.x;
       var sy = n._y * t.k + t.y;
       if (sx < -50 || sx > W + 50 || sy < -30 || sy > H + 30) return;
-      var label = n.short;
-      var fs = 10.5 * U;
+      var label = n.short;
+      var fs = labelSel.node() ? parseFloat(getComputedStyle(labelSel.node()).fontSize) || 10.5 * U : 10.5 * U;
       // 盒模型按实测校准：字形盒宽 = len*1.05em（含 letter-spacing .04em），
       // 高 = 1.42em，上缘在基线上方 1.15em（基线下缘另有 0.27em 下伸）。
       // 另加 0.08em 高、2px 宽的余量：密集段两站间距可能只比字高多零点几像素，
@@ -751,6 +775,7 @@
           if (mode.label && labelHit(box)) continue;
           var onPanel = panelHit(box);
           if (mode.panel && onPanel) continue;
+
           placed = { box: box, cd: cd, dx: dx, dy: dy, paneled: onPanel };
           break;
         }
