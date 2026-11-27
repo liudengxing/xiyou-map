@@ -1789,10 +1789,17 @@
   /* ────────────────────────────────────────────── 启动 */
 
   function loadGeodata() {
-    return Promise.all([
-      fetch("assets/vendor/land-110m.json").then(function (r) { return r.json(); }),
-      fetch("assets/vendor/china-provinces.json").then(function (r) { return r.json(); }),
-    ]).then(function (arr) {
+    // file:// 下 fetch 会被 CORS 拦，双击打开时底图整片空白；
+    // 所以 index.html 先载入 assets/vendor/geo-inline.js（两份数据挂到 window.__XIYOU_GEO），
+    // 这里优先用它；万一那支脚本没载入（旧缓存或单独引用 app.js），再退回 fetch。
+    var inline = window.__XIYOU_GEO;
+    var ready = inline
+      ? Promise.resolve([inline.land, inline.china])
+      : Promise.all([
+        fetch("assets/vendor/land-110m.json").then(function (r) { return r.json(); }),
+        fetch("assets/vendor/china-provinces.json").then(function (r) { return r.json(); }),
+      ]);
+    return ready.then(function (arr) {
       var land = arr[0], china = arr[1];
       geoLand = topojson.feature(land, land.objects.land);
 

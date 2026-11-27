@@ -4,14 +4,19 @@
 
 把《西游记》一百回读成一条时间线：拖动底部的回目刻度，地图上的朱砂路线就会随取经队伍推进；点任一站点，右侧展开这一站的回目、难数、妖怪与情节。
 
-纯静态站点，无依赖、无构建、无后端。**需要一个本地静态服务器**（浏览器对 `file://` 的 `fetch` 限制会让底图的两个 topojson 加载不到，页面只剩空地图），最简单的是：
+纯静态站点，无依赖、无构建、无后端。**双击 `index.html` 即可打开**：底图的两份地理数据
+（`land-110m.json`、`china-provinces.json`）已由 `scripts/build-geo-inline.mjs` 合成一支
+`assets/vendor/geo-inline.js`，在 `file://` 下同样可用，控制台不会再有 CORS 报错。
+
+也可以起一个本地静态服务器（改数据、看 DevTools 缓存行为时更顺手）：
 
 ```bash
 python -m http.server 8123
 # 然后访问 http://127.0.0.1:8123/
 ```
 
-（第 35 轮 P5-7 验收把「双击即开」这条改成上面的写法：实测 `file://` 下 `assets/js/app.js` 的两处 `fetch()` 会被浏览器拦掉。要恢复双击即开，得把 `assets/vendor/land-110m.json`、`china-provinces.json` 包成带 `window.__LAND` / `window.__CHINA` 的 js 文件——那要动 `assets/`，留作后续条目。）
+两种打开方式底图等价：`http://` 下 `app.js` 同样直接用内联包，只有内联包缺失（例如只单独引用了 `app.js`）时才回退到 `fetch`。
+（第 57 轮 Q10 把第 35 轮的「必须起服务器」改回双击即开；`geo-inline.js` 是生成的，改了那两份 json 就重跑一次脚本。）
 
 ## 「西游记有地图吗」
 

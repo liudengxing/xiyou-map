@@ -19,6 +19,13 @@
 - 不回退：`cards 217`（目标 180–250）、`clips []`、`buildMs 464ms`、`walkPath 3/3`；版本 `props.js?v=2`、`scene.js?v=51`。
 - 仍**无肉眼判读**（`bcdp_screenshot`/`read_image` 只回元数据），未做 A/B 盲评。见 `docs/ITERATIONS/046-foreground-props.md`。
 
+### 第 57 轮（2026-11-27）：`file://` 双击即开（Q10）
+
+- 新增 `scripts/build-geo-inline.mjs` → `assets/vendor/geo-inline.js`（638041 B，`window.__XIYOU_GEO = {land, china}`）；
+  `index.html` 在 `topojson-client` 之后引入，`loadGeodata()` 优先用内联、缺失时回退 `fetch`。
+- 实测 `file://` 与 `http://` 都是：图钉 48、`.land/.province/.nine-dash` 各 1 条、`.border` 0、json 请求 0；
+  `#base=modern` 下省界 `display:inline`。README 改回「双击即开」。
+
 ### 第 56 轮（2026-11-27）：手机横屏地图带（Q9）
 
 - `buildProjection()` 加短屏档（`top 74 / bottom 100`），矮屏详情卡改 292×108 竖卡，`.pin-label` 字号变量化（矮屏 9.6px），

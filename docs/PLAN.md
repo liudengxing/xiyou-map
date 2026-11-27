@@ -16,7 +16,7 @@
 | Q7 ✅（第 54 轮） | 逐回在场名单（续）：回内粒度 | `data.js`、`app.js`、`style.css` | 真假美猴王 56–57 回无悟空、58 回归队（`fig-part` + 「第 58 回归队」）；第 43 回补八戒同被摄；第 76 回依据不足，标存疑不写入 |
 | Q8 ✅（第 55 轮） | 名牌与纸片对话中文排版 | `scenes/shared/paper-ui.css`、`style.css` | 实际字族落到楷/宋而非 Noto；390 与 1440 不溢出 |
 | Q9 ⏸ blocked-D-07（第 56 轮已做可用部分：标签 9→12） | P4-22 640×360 地图带再挤 | `index.html`、`style.css`、`app.js` | 640×360 地图带 ≥96px、可见标签 ≥20、五浮层不重叠、1440/390 无回归 |
-| Q10 | P4-24 `file://` 双击可开 | `assets/vendor/geo-inline.js`（新）、`app.js`、`index.html` | `file://` 下有底图与 48 图钉、控制台无 CORS；http 下等价；`check-all` 通过 |
+| Q10 ✅（第 57 轮） | P4-24 `file://` 双击可开 | `assets/vendor/geo-inline.js`（新）、`app.js`、`index.html` | `file://` 下有底图与 48 图钉、控制台无 CORS；http 下等价；`check-all` 通过 |
 | Q11 | P4-25 `capture.py --from-dir` | `scripts/papercraft/capture.py` | `--help` 有该参数；给一张现有截图能出并排图 |
 | Q12 | 小米交付包按当前代码重打 | `西游记时序图-小米 vibeCoding 大赛/…zip` | 包内含 `china-provinces.json`、`app.js` 有 `province`；双击 index 走本地服务说明在包内 README |
 | Q13 | P6-1 黑风山（16–17 回） | `scenes/heifengshan/` | `ready true`、`cards 100–250`、`clips []`、`buildMs < 5000` |

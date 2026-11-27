@@ -248,7 +248,7 @@
 - [x] **P5-4b 按设定图重做悟空纸偶**（第 42 轮 U-042-01）✅ 11 卡 → 16 卡、配色换暖红褐族、`clips []`；**上色成像未验证**（图像通道只回元数据），形体像不像需用户看图定。
   - 遗留：卡面纹理仅 28×35 px（`ppu 22` 量级）——**已由第 49 轮解决**（U-049-01/02）：悟空 `CARD_RES=3.4`（136 px/单位，躯干 115×183）、三人 `res 2.8`（136–189 px 宽），`buildMs 649 < 2000`、`cards 217`、`clips []`；只剩小腿这类窄卡（0.34 单位宽）仍只有 47×79 px，属卡片尺寸所限。
 - [x] **P5-9 前景纸件（清晰带里的成组体块）**（第 46 轮完成）：`scenes/huoyan/props.js` 16 组 77 片（岩石/枯草/断旗杆/骨片）+ 10 粒碎纸砾，`scene.js` 近地印刷 240 石面 / 340 簇砾石 / 320 条干裂划。实测 `printDetail 0.008 → 0.044`、`flatPct 92.5 → 63.4`（PASS）、`barePct 93.2 → 72.9`、`localContrast 0.026 → 0.059`，**17 PASS / 3 WARN**；`cards 217`、`clips []`、`buildMs 464`、`walkPath 3/3`。未达 0.06：按验收允许的另一条路，已在 `docs/ITERATIONS/046-foreground-props.md` 写下「这条门限为何不适用于空场荒漠」的书面结论（四点论证）。版本 `props.js?v=2`、`scene.js?v=51`。
-- [ ] **P4-24 主站 `file://` 双击可开**（25 min，需改 `assets/`）：把 `assets/vendor/{land,countries}-110m.json` 包成 `assets/vendor/geo-inline.js`（`window.__LAND` / `window.__COUNTRIES`），`loadGeodata()` 优先读全局变量、缺了再 `fetch`；`index.html` 加一行 `<script src="assets/vendor/geo-inline.js">`。验收：`file://` 打开有底图、48 图钉、控制台无 CORS 报错；http 下与现在等价（`check-all` 3 项仍通过）。
+- [x] **P4-24 主站 `file://` 双击可开**（25 min，需改 `assets/`）：把 `assets/vendor/{land,countries}-110m.json` 包成 `assets/vendor/geo-inline.js`（`window.__LAND` / `window.__COUNTRIES`），`loadGeodata()` 优先读全局变量、缺了再 `fetch`；`index.html` 加一行 `<script src="assets/vendor/geo-inline.js">`。验收：`file://` 打开有底图、48 图钉、控制台无 CORS 报错；http 下与现在等价（`check-all` 3 项仍通过）。（第 57 轮：geo-inline.js 638 KB，双击可开）
 - [ ] **P4-25 给 `capture.py` 补不依赖 Playwright 的路径**（15 min）：本机 `python` 无 playwright，`scripts/papercraft/capture.py` 跑不起来。加 `--from-dir` 模式（读现有截图，只做裁切/并排/量化），`ab_sheet.py` 也才有输入。验收：`capture.py --help` 有该参数，给 `.tmp/r35-overview.png` 能出一张并排图。
 ### 用户五条（第 37 轮，2026-11-27）
 
