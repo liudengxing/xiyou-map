@@ -399,42 +399,31 @@ try {
   }
 
   // ---- P5-3 芭蕉洞（偏右，洞门用 holes 挖穿）--------------------------------------
+  // 第 52 轮 Q5：原来只是「暗纸 + 一张挖了洞的立面 + 一道顶边」三层平卡，洞口像贴在墙上的
+  // 一张照片。改成一圈**折进洞里的箱折**：立面挖穿之后，往洞里退三层（每层比前一层小一号、
+  // 深一号），加上最后一张实心的暗纸，四层落差把「洞的深度」立起来；立面切口内缘另加一圈
+  // 0.12 宽的深墨环（同样是挖洞做出来的：外圈 arch × 1.09 挖掉 arch），纸才有裁切的厚度。
   const arch = [[-1.45, 0], [-1.45, 2.05], [-0.95, 2.85], [0, 3.25], [0.95, 2.85], [1.45, 2.05], [1.45, 0]];
   const caveFace = [[-2.6, 0], [2.6, 0], [2.6, 4.3], [-2.6, 4.3]];
-  // 洞门后的一张暗纸：透过洞口看到的是幽深，不是背景色
-  H.popup(arch, withPrint((P) => { P.fill(C.ink); P.innerShade('#000000', { alpha: 0.5, blurPx: 6 }); }, C, 'wall'),
-    { x: 22, z: -19.0, yaw: 0, scale: 1.0 });
-  // 洞口立面（赭石卡纸，门洞位置挖穿）
+  const scaleArch = (k) => arch.map(([ax, ay]) => [ax * k, ay * k]);
+
+  // ① 洞底：一张实心暗纸（最远的一层，退到 z -19.9）
+  H.popup(scaleArch(0.66), withPrint((P) => { P.fill(C.ink); P.innerShade('#000000', { alpha: 0.5, blurPx: 6 }); }, C, 'wall'),
+    { x: 22, z: -19.9, yaw: 0, scale: 1.0 });
+  // ②③ 洞颈两层：每层自己挖一个更小的洞，让后一层露出来（箱折的「收口」）
+  H.popup(scaleArch(0.84), withPrint((P) => { P.fill('#2a1b13'); P.innerShade(C.ink, { alpha: 0.45, blurPx: 8 }); }, C, 'wall'),
+    { x: 22, z: -19.45, yaw: 0, scale: 1.0, holes: [scaleArch(0.66)] });
+  H.popup(scaleArch(0.98), withPrint((P) => { P.fill('#40291c'); P.innerShade(C.burnt, { alpha: 0.35, blurPx: 9 }); }, C, 'wall'),
+    { x: 22, z: -19.05, yaw: 0, scale: 1.0, holes: [scaleArch(0.84)] });
+  // ④ 立面：赭石卡纸，门洞挖穿（最前一层）
   H.popup(caveFace, withPrint((P) => { P.fill(C.ochre); P.innerShade(C.ochreD, { alpha: 0.4, blurPx: 10 }); }, C, 'wall'),
     { x: 22, z: -18.6, yaw: 0, scale: 1.0, holes: [arch] });
+  // ⑤ 切口内缘的一圈描边：外圈 1.09 倍挖掉 1.0 倍，剩下的就是 0.12 宽的深墨环
+  H.popup(scaleArch(1.09), (P) => { P.fill(C.ink); },
+    { x: 22, z: -18.63, yaw: 0, scale: 1.0, holes: [arch] });
   // 洞顶两道赭深压边：让洞口有厚度，不像一张平贴纸
   H.popup([[-2.6, 4.3], [2.6, 4.3], [2.6, 4.62], [-2.6, 4.62]], (P) => { P.fill(C.ochreD); },
     { x: 22, z: -18.6, yaw: 0, scale: 1.0 });
-  // 纸灯：洞门两侧各一盏（小金纸片 + 暖晕）
-  for (const dx of [-3.4, 3.4]) {
-    H.popup([[-0.22, 0], [0.22, 0], [0.28, 0.9], [-0.28, 0.9]], (P) => {
-      P.fill(C.gold);
-      P.g.fillStyle = 'rgba(255,220,178,0.55)';
-      P.g.beginPath();
-      P.g.arc((P.box.x0 + P.box.x1) / 2, (P.box.y0 + P.box.y1) / 2, Math.min(P.box.w, P.box.h) * 0.42, 0, Math.PI * 2);
-      P.g.fill();
-      P.innerShade(C.shadow, { alpha: 0.35, blurPx: 4 });
-    }, { x: 22 + dx, z: -17.8, yaw: 0, scale: 1.6 });
-  }
-  // 芭蕉叶：洞旁两片石绿纸叶（spec PALETTE 的 azurite）
-  const leaf = [[-1.5, 0.15], [-0.9, 1.5], [0, 2.3], [0.95, 1.45], [1.55, 0.2], [0.5, -0.15], [-0.45, -0.1]];
-  for (const [dx, sc] of [[-5.2, 2.2], [5.6, 1.8]]) {
-    H.popup(leaf, withPrint((P) => {
-      P.fill(C.jade);
-      P.g.strokeStyle = 'rgba(42,36,28,0.35)';
-      P.g.lineWidth = 2;
-      P.g.beginPath();
-      P.g.moveTo((P.box.x0 + P.box.x1) / 2, P.box.y1 - 4);
-      P.g.lineTo((P.box.x0 + P.box.x1) / 2, P.box.y0 + 4);
-      P.g.stroke();
-    }, C, 'wall'), { x: 22 + dx, z: -17.6, yaw: 0, scale: sc });
-  }
-
   // ---- P5-9 前景纸件 ---------------------------------------------------------------
   // 十组小件（纸石簇 4 片 / 枯草束 5 片 / 断旗杆 3 片 / 骨片干柴堆 4 片）+ 十粒碎纸砾，
   // 全摆在 sharp band（z -16…8）里，组间留空。它们只填空地，不挡走道，故不设 solid。
