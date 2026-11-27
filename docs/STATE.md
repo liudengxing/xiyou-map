@@ -3,6 +3,11 @@
 > 每轮迭代前先读本文，迭代后必须更新。字段：轮次 / 交付物 / 已知问题 / 环境。
 
 ## 迭代记录
+### 第 43 轮（U-043-01/02/03）回退悟空 + 人物造型规范
+- 用户 m07429 要求回退：`git checkout e831a5f -- scenes/huoyan/wukong.js`，import 前进到 `wukong.js?v=6`、`scene.js?v=42`（版本号只前进不后退，否则吃旧模块）。
+- 实测：`ready true / cards 151 / clips [] / buildMs 367`；悟空 11 卡；脚底浮空 0.04（042 修过的髋枢轴调整一并回退）。
+- 新增 `docs/PAPERCRAFT-CHARACTER-SPEC.md`：硬约束 13 条（T 结构、层距 ≥2T、肢体枢轴在躯干轮廓外、两腿不互叠、侧卡互不重叠、手持物不横穿手臂、每卡 z 唯一并命名等）、尺寸表、步态、用色、验收 7 步、做不到的部分。
+- 见 `docs/ITERATIONS/043-revert-wukong-and-character-spec.md`。
 ### 第 42 轮（U-042-01/02/03）按设定图重做悟空纸偶：11 卡 → 16 卡
 - 配色改设定图量化所得那族：`deep #6d2c15 / ember #b93d20 / emberLit #cf4423 / ochre #c17036 / ochreL #dc9a6e / gold #b8934a / face #f0d3ae`；设定图全无蓝绿，旧版石绿靛青已去。
 - 结构 16 卡：躯干、躯干侧、头、头侧、冠、鬓毛×2、披膊×2、臂×2、腿×2、腰带、战裙、金箍棒；深度表 staff −0.54 … crown 0.26。

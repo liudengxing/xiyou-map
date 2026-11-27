@@ -47,3 +47,4 @@
 | 040 | 2026-11-27 13:40 | 逐回在场名单（续）：被摄走五条（40/43/49/65/82）+ 纸人淡态 | assets/js/data.js、assets/js/app.js、assets/css/style.css、index.html、docs/* | U-040-01 |
 | 041 | 2026-11-27 13:58 | 三人核对（八戒/沙僧/白龙马）：入队回与在场区间确认，补第 30 回白龙马、第 89 回师兄弟三人同去 | assets/js/data.js、index.html、docs/* | U-041-01 |
 | 042 | 2026-11-27 14:20 | 悟空纸偶重做：11 卡 → 16 卡，配色换设定图那族（暖红褐、去蓝绿），clips 归零、步态反相 | scenes/huoyan/wukong.js、scenes/huoyan/scene.js、scenes/huoyan/index.html、docs/* | U-042-01/02/03 |
+| 043 | 2026-11-27 14:35 | 回退悟空到 11 卡版本（前向回退，版本号前进到 v=6），新增《纸模人物造型规范》13 条硬约束 + 验收清单 | scenes/huoyan/wukong.js、scenes/huoyan/scene.js、scenes/huoyan/index.html、docs/PAPERCRAFT-CHARACTER-SPEC.md、docs/* | U-043-01/02/03 |
