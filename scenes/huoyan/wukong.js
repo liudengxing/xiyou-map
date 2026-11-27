@@ -57,7 +57,11 @@ export function buildWukong(H, { x = 0, z = 3 } = {}) {
   body.name = 'wukong-body';
   rig.add(body);
 
-  const opts = () => ({ ...H.cardOpts(x, z), thickness: T, edgeWidth: 0.08 });
+  // Q3：卡面纹理密度。cardOpts(x, z, scale, parent, res) 的 res 是打印倍率
+  // （pxPerUnit = 40 × res ÷ scale），1 的卡宽只有 30 px 上下，
+  // 一件 0.9 单位的躯干印不满 96 px，印花线画到 2 px 就会被重采样糊掉。
+  const CARD_RES = 3.4;   // 40 × 3.4 = 136 px/单位 → 0.84 单位躯干 ≈ 114 px、0.72 单位头 ≈ 98 px
+  const opts = () => ({ ...H.cardOpts(x, z, 1, null, CARD_RES), thickness: T, edgeWidth: 0.08 });
 
   /** 造一张卡；pts 用父级局部坐标，dz 是本层相对父级的深度。 */
   const card = (name, pts, paint, dz, parent = body, folds = ['top']) => {

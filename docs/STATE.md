@@ -19,6 +19,13 @@
 - 不回退：`cards 217`（目标 180–250）、`clips []`、`buildMs 464ms`、`walkPath 3/3`；版本 `props.js?v=2`、`scene.js?v=51`。
 - 仍**无肉眼判读**（`bcdp_screenshot`/`read_image` 只回元数据），未做 A/B 盲评。见 `docs/ITERATIONS/046-foreground-props.md`。
 
+### 第 49 轮（2026-11-27）：卡面纹理分辨率（Q3，提前到 Q2 之前）
+
+- 原状：悟空 `H.cardOpts(x, z)` 默认 `res=1`、`scale=1` → 40 px/单位，0.84 单位的躯干只有 28×35 px；三人 `scale 0.86–0.95` + `res 0.8` 同样约 28 px。Q2 要求「印花线宽 ≥2 px」，在这个画布上画不出来，故先做 Q3。
+- `wukong.js` 新增 `const CARD_RES = 3.4;`、`H.cardOpts(x, z, 1, null, CARD_RES)` → 136 px/单位；`people.js` 的 `res: 0.8 → 2.8` → 约 124 px/单位。版本 `wukong.js?v=12`、`people.js?v=4`、`scene.js?v=55`。
+- 实测（1256×774）：躯干 28×35 → **115×183 px**、头 99×120、三人 136×251 / 189×263 / 143×250；`buildMs 464 → 649`（< 2000）、`cards 217` 不降、`clips []`。`measure.py` 3 WARN 不变（印花内容尚未加，Q2 才加）。
+- 未肉眼判读（截图只回元数据）。见 `docs/ITERATIONS/049-card-print-res.md`。
+
 ### 第 48 轮（2026-11-27）：三个 NPC 的九句台词按回目改写（Q1）
 
 - 用户已授权按回目改写（m07937）。`scenes/huoyan/people.js` 十二行台词段整体重写：罗刹女（第59回记恨借扇 / 第59回扇子功效 / 第60回假扇越扇越旺）、牛魔王（第60回碧波潭赴宴 / 第60回被骗扇 / 第61回被哪吒穿鼻擒住）、八戒（第59回路阻火焰山 / 第61回助力败魔王 / 第61回扇熄过山），**每句句末标回目号**；每人新增 `badge`。

@@ -292,7 +292,9 @@ export function buildPeople(H) {
         order: 8,                // 不比火墙（10+）近，比地面高
         sway: 0.012,             // 站着的纸人有一点呼吸
         solid: c.solid || 0,
-        res: 0.8,
+        // Q3：三人 scale 0.86–0.95，res 0.8 时卡面只有 28 px 级；抬到 2.8
+        // （40 × 2.8 ÷ 0.9 ≈ 124 px/单位）才印得出 2 px 的线。
+        res: 2.8,
       });
       h.group.userData.personId = p.id;
       h.group.userData.cardIndex = i;
