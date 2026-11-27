@@ -5,6 +5,7 @@
 import { createHarness } from '../vendor/papercraft/harness.js';
 import { buildWukong, HERO_H } from './wukong.js?v=9';
 import { buildPeople } from './people.js';
+import { buildProps } from './props.js?v=2';
 import { createDialog } from '../shared/dialog.js';
 import * as THREE from 'three';
 
@@ -145,6 +146,60 @@ try {
       const x = -56 + rnd() * 112, z = -46 + rnd() * 80;
       g.fillStyle = 'rgba(74,60,42,' + (0.03 + rnd() * 0.05).toFixed(3) + ')';
       g.fillRect(X(x), Z(z), px * (0.6 + rnd() * 1.2), px * (0.5 + rnd()));
+    }
+
+    // ---- P5-9 近景印刷（第 46 轮）------------------------------------------------------------------------------------------------
+    // measure 的 sharp band 落在画面下半（blur 1.2–1.4 的那几带），对应的是相机与主角之间
+    // 这块近地（z 0…18）。远景印得再多也不进清晰带，所以这里单独给近地加一层硬边印花：
+    // 石块边的折线（硬边缘）、砾石簇、干裂的短划。最小 2px、α ≥ 0.3，缩到 1460 宽才不糊。
+    const nearPx = (ppu / 22) * 1.15;
+    for (let i = 0; i < 240; i++) {                        // 露出的石面：多边形块 + 一条硬边
+      const x = -28 + rnd() * 56, z = 0 + rnd() * 18;
+      const r = (0.7 + rnd() * 2.2) * ppu;
+      const n = 5 + Math.floor(rnd() * 3);
+      const a0 = rnd() * Math.PI * 2;
+      g.beginPath();
+      for (let k = 0; k < n; k++) {
+        const a = a0 + (k / n) * Math.PI * 2;
+        const rr = r * (0.62 + rnd() * 0.55);
+        const px2 = X(x) + Math.cos(a) * rr, py2 = Z(z) + Math.sin(a) * rr * 0.6;
+        k ? g.lineTo(px2, py2) : g.moveTo(px2, py2);
+      }
+      g.closePath();
+      g.fillStyle = 'rgba(150,112,70,' + (0.20 + rnd() * 0.16).toFixed(3) + ')';
+      g.fill();
+      g.strokeStyle = 'rgba(42,36,28,' + (0.28 + rnd() * 0.22).toFixed(3) + ')';
+      g.lineWidth = nearPx * (1.6 + rnd() * 1.2);
+      g.stroke();
+    }
+    for (let i = 0; i < 340; i++) {                        // 砾石簇：近景颗粒要压得住重采样
+      const cx = -28 + rnd() * 56, cz = 0 + rnd() * 18, k = 5 + Math.floor(rnd() * 4);
+      for (let n = 0; n < k; n++) {
+        const rr = (1.5 + rnd() * 2.4) * nearPx;
+        g.fillStyle = rnd() < 0.55
+          ? 'rgba(42,36,28,' + (0.30 + rnd() * 0.26).toFixed(3) + ')'
+          : 'rgba(140,43,34,' + (0.24 + rnd() * 0.24).toFixed(3) + ')';
+        g.beginPath();
+        g.ellipse(X(cx + (rnd() - 0.5) * 2.4), Z(cz + (rnd() - 0.5) * 2.4),
+          rr, rr * (0.7 + rnd() * 0.5), rnd() * 3, 0, Math.PI * 2);
+        g.fill();
+      }
+    }
+    for (let i = 0; i < 320; i++) {                        // 干裂短划：两折的硬线，顺风向
+      const x = -28 + rnd() * 56, z = 0 + rnd() * 18;
+      const len = (0.5 + rnd() * 1.5) * ppu;
+      const a = -0.25 + (rnd() - 0.5) * 0.5;
+      g.strokeStyle = rnd() < 0.5
+        ? 'rgba(42,36,28,' + (0.26 + rnd() * 0.22).toFixed(3) + ')'
+        : 'rgba(110,74,44,' + (0.24 + rnd() * 0.20).toFixed(3) + ')';
+      g.lineWidth = nearPx * (1.4 + rnd() * 1.4);
+      g.lineCap = 'butt';
+      g.beginPath();
+      const mx = X(x) + Math.cos(a) * len * 0.5, my = Z(z) + Math.sin(a) * len * 0.5;
+      g.moveTo(X(x), Z(z));
+      g.lineTo(mx, my);
+      g.lineTo(mx + Math.cos(a - 0.35) * len * 0.5, my + Math.sin(a - 0.35) * len * 0.5);
+      g.stroke();
     }
   });
 
@@ -371,6 +426,11 @@ try {
     }, { x: 22 + dx, z: -17.6, yaw: 0, scale: sc });
   }
 
+  // ---- P5-9 前景纸件 ---------------------------------------------------------------
+  // 十组小件（纸石簇 4 片 / 枯草束 5 片 / 断旗杆 3 片 / 骨片干柴堆 4 片）+ 十粒碎纸砾，
+  // 全摆在 sharp band（z -16…8）里，组间留空。它们只填空地，不挡走道，故不设 solid。
+  const props = buildProps(H, C);
+
   // ---- P5-2 测试卡（只在 ?test 下印）------------------------------------------------
   // 三张并排的小方卡（放在 ?test 取景中心 target [3,1.5,-6] 与主角之间），用来在近景里判四件事：厚度（0.08 的侧面是否有纸边）、裁切边（切口白线）、
   // 死哑光（没有高光斑）、暖光阴影（阴影偏赭而不是偏灰）。它们不是场景内容，正式构图不放。
@@ -399,6 +459,7 @@ try {
     openPerson,
     dialog,
     isFrozen: () => frozen,
+    props,
   };
 
   H.start();

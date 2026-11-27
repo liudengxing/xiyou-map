@@ -10,6 +10,15 @@
 - 版本：`wukong.js?v=9`、`scene.js?v=45`。
 - 人物观感（像不像参考图）需人工判读，截图 `.tmp/r45-wukong-v3-scene.png` / `-test2.png`。
 
+### 第 46 轮（2026-11-27）：P5-9 前景纸件（77 片 + 近地印刷）
+
+- 新建 `scenes/huoyan/props.js`：16 组、77 片纸件（岩石/枯草/断旗杆/骨片干柴）+ 10 粒碎纸砾，全部落在清晰带 `z ∈ [-16.4, 14.2]`，同簇 z 间隔 0.09、每片 z 唯一，`res 0.8–1.0`、`order 39–53`，不设 solid（不挡走位）。
+- `scene.js` 的 `printGround` 追加近地印刷：240 块露石面（硬边 + 淡填）、340 簇砾石、320 条干裂短划，母题线宽按 `nearPx = (ppu/22) * 1.15` 缩放，保证在 1256 宽截图里不被 measure 的重采样糊掉。
+- 指标（基线 → 终值）：`printDetail 0.008 → 0.044`、`flatPct 92.5 → 63.4`（PASS）、`barePct 93.2 → 72.9`、`localContrast 0.026 → 0.059`；**17 PASS / 3 WARN**（余 printDetail、localContrast、barePct 三项，书面结论已写进 046）。
+- 失败实验并已回退：在近地再加 90 块「深赭第三色阶斑」→ `printDetail` 反跌到 0.013、`flatPct` 升到 85.7；原因是内部纯色、边缘梯度不到 `>0.10` 门限，对 measure 只是更大片平色。删该段后版本抬回 51 复测。
+- 不回退：`cards 217`（目标 180–250）、`clips []`、`buildMs 464ms`、`walkPath 3/3`；版本 `props.js?v=2`、`scene.js?v=51`。
+- 仍**无肉眼判读**（`bcdp_screenshot`/`read_image` 只回元数据），未做 A/B 盲评。见 `docs/ITERATIONS/046-foreground-props.md`。
+
 ## 第 44 轮（U-044-01/02/03）国界：从数据层绕开
 - 删 `assets/vendor/countries-110m.json` 与它的 `topojson.mesh` 用法；新增 `china-provinces.json`（DataV，582522 B，35 feature = 34 省级 + 1 条 `100000_JD` 九段线）。
 - 今图层画 `.province` + `.nine-dash`；古图层只有 `.land` 海岸线，`.border` 节点数为 0。关于补「边界」段与「并非测绘成果」声明；README 补边界政策与校验说明。
