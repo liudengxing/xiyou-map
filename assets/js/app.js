@@ -39,7 +39,7 @@
   var U = 1;                     // 随视口缩放的尺度系数（图钉、字号、线宽）
   var svg, gRoot, gBase, gRoute, gRealLayer, gModern, gPinLayer, proj, W, H;
   var pinSel, routeEls = {}, realLabelSel;
-  var geoLand = null, geoBorders = null;
+  var geoLand = null, geoProvinces = null, geoNineDash = null;
 
   var $ = function (sel) { return document.querySelector(sel); };
 
@@ -286,12 +286,7 @@
         .datum(geoLand)
         .attr("class", "land")
         .attr("d", d3.geoPath(proj));
-      if (geoBorders) {
-        gBase.append("path")
-          .datum(geoBorders)
-          .attr("class", "border")
-          .attr("d", d3.geoPath(proj));
-      }
+
     }
 
     // 山形符号：沿山带加密、两排错落，才像山脉而非散点
@@ -334,6 +329,17 @@
     // 今图层：与古舆图同时存在，靠 #stage[data-base] 切换显隐
     // （不重投影、不重画路线，切底图不该让图钉跳位）
     gModern = gBase.append("g").attr("class", "modern-layer").attr("pointer-events", "none");
+    // 今图的界线只画国内行政区划（34 个省级轮廓，含台湾、香港、澳门）与九段线。
+    // 刻意不加载 Natural Earth 的国界数据集：那套数据把台湾与大陆并列成两个 feature，
+    // 中印等边界也不按国内审核的画法。省界是行政区划，不构成对外边界表态。
+    if (geoProvinces) {
+      gModern.append("path").datum(geoProvinces).attr("class", "province")
+        .attr("d", d3.geoPath(proj));
+    }
+    if (geoNineDash) {
+      gModern.append("path").datum(geoNineDash).attr("class", "nine-dash")
+        .attr("d", d3.geoPath(proj));
+    }
     D.modernCities.forEach(function (c) {
       var q = proj([c.lon, c.lat]);
       if (!q) return;
@@ -1708,11 +1714,20 @@
   function loadGeodata() {
     return Promise.all([
       fetch("assets/vendor/land-110m.json").then(function (r) { return r.json(); }),
-      fetch("assets/vendor/countries-110m.json").then(function (r) { return r.json(); }),
+      fetch("assets/vendor/china-provinces.json").then(function (r) { return r.json(); }),
     ]).then(function (arr) {
-      var land = arr[0], countries = arr[1];
+      var land = arr[0], china = arr[1];
       geoLand = topojson.feature(land, land.objects.land);
-      geoBorders = topojson.mesh(countries, countries.objects.countries, function (a, b) { return a !== b; });
+
+      // 只取国内省级轮廓；九段线单独一层，画法与省界分开
+      var prov = { type: "FeatureCollection", features: [] };
+      var jd = [];
+      (china.features || []).forEach(function (f) {
+        if (f.properties && f.properties.adcode === "100000_JD") jd.push(f);
+        else prov.features.push(f);
+      });
+      geoProvinces = prov.features.length ? prov : null;
+      geoNineDash = jd.length ? { type: "FeatureCollection", features: jd } : null;
     }).catch(function (e) {
       console.warn("地理数据加载失败，仅绘制示意图层", e);
     });

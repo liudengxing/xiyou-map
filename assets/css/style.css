@@ -92,11 +92,18 @@ body::before {
   stroke: rgba(116, 90, 54, 0.26);
   stroke-width: calc(4.2px * var(--u, 1));
 }
-.border {
+/* 现代层：省界（行政区划）与九段线。国界一律不画——见 app.js 的注释。 */
+.province {
   fill: none;
-  stroke: rgba(122, 100, 68, 0.30);
-  stroke-width: 0.55;
-  stroke-dasharray: 3 2.4;
+  stroke: rgba(122, 100, 68, 0.46);
+  stroke-width: calc(0.7px * var(--u, 1));
+  stroke-linejoin: round;
+}
+.nine-dash {
+  fill: none;
+  stroke: rgba(42, 36, 28, 0.62);
+  stroke-width: calc(1.35px * var(--u, 1));
+  stroke-linecap: round;
 }
 .graticule {
   fill: none;
@@ -1351,7 +1358,7 @@ body.scene-open #detail, body.scene-open .timeline { pointer-events: none; }
 
 /* ── 今图（现代底图）：同一张纸，只把地理信息换成当代 ──
    古地名注记与山形符号是「古舆图」的画法，今图里让位给当代城市；
-   陆地与国界略提对比，城市点用墨线与朱砂字，纸底色不动。 */
+   陆地轮廓与省界略提对比，城市点用墨线与朱砂字，纸底色不动。 */
 .modern-layer { display: none; }
 #stage[data-base="modern"] .modern-layer { display: inline; }
 #stage[data-base="modern"] .regions,
@@ -1361,9 +1368,11 @@ body.scene-open #detail, body.scene-open .timeline { pointer-events: none; }
   fill: #ece6d4;
   stroke: rgba(96, 78, 52, 0.62);
 }
-#stage[data-base="modern"] .border {
-  stroke: rgba(96, 78, 52, 0.44);
-  stroke-width: calc(0.8px * var(--u, 1));
+#stage[data-base="modern"] .province {
+  stroke: rgba(96, 78, 52, 0.6);
+}
+#stage[data-base="modern"] .nine-dash {
+  stroke: rgba(42, 36, 28, 0.72);
 }
 #stage[data-base="modern"] .graticule { stroke: rgba(120, 104, 78, 0.16); }
 .modern-layer .mcity circle {

@@ -11,7 +11,7 @@ python -m http.server 8123
 # 然后访问 http://127.0.0.1:8123/
 ```
 
-（第 35 轮 P5-7 验收把「双击即开」这条改成上面的写法：实测 `file://` 下 `assets/js/app.js` 的两处 `fetch()` 会被浏览器拦掉。要恢复双击即开，得把 `assets/vendor/land-110m.json`、`countries-110m.json` 包成带 `window.__LAND` / `window.__COUNTRIES` 的 js 文件——那要动 `assets/`，留作后续条目。）
+（第 35 轮 P5-7 验收把「双击即开」这条改成上面的写法：实测 `file://` 下 `assets/js/app.js` 的两处 `fetch()` 会被浏览器拦掉。要恢复双击即开，得把 `assets/vendor/land-110m.json`、`china-provinces.json` 包成带 `window.__LAND` / `window.__CHINA` 的 js 文件——那要动 `assets/`，留作后续条目。）
 
 ## 「西游记有地图吗」
 
@@ -56,10 +56,12 @@ python -m http.server 8123
 - **回目一百回**：取自中文维基文库《西游记》目录，繁转简后录入 `assets/js/data.js` 的 `chapters`。
 - **八十一难名目**：第九十九回难簿原文，按次序录入 `nan`；其中第八十难「凌云渡脱胎」在难簿内，第八十一难「通天河遇鼋」是菩萨临时补入的，原文如此，未作改动。
 - **站点情节**：据各回原文自述，不伪造引文。卡片里的引句只用两处核实过的原文——第七回「皇帝轮流做，明年到我家」、第十三回法门寺「心生，种种魔生；心灭，种种魔灭」。
-- **底图**：Natural Earth 110m 简化地物（public domain），经 world-atlas 打包为 TopoJSON，随仓库带在 `assets/vendor/`。
+- **底图**：海岸线与陆地轮廓用 Natural Earth 110m 简化地物（public domain，经 world-atlas 打包为 TopoJSON）；省界与九段线用阿里云 DataV 的公开行政区划边界（geojson）。两者都随仓库带在 `assets/vendor/`。
+- **边界政策**：不加载任何国外的国界数据集（原先的 world-atlas `countries-110m.json` 已删）。理由是那套数据把台湾与大陆并列成两个 feature、中印等边界也不按国内审核的画法，画出来就是一张表态。今图层只画省级行政区划（含台湾省、香港、澳门）与南海九段线，古图层不画任何疆域界线。省界数据仅作示意，并非测绘成果。
 - **绘图**：d3 v7（geoMercator + zoom）与 topojson-client，均为本地文件，无 CDN 依赖。
 - **站点分类数字**：「关于」里「今地可考「8」/ 虚构境域与国度「15」/ 小说地名「24」」是按每个站点 `modern` 字段算出来的，改过地名或加站之后跑 `node scripts/check-stations.mjs` —— 它会同时校验 48 站、100 回目、1–81 难无缺无重，并把 `index.html` 里那三段文案的数字与实际分档比对，不一致就非零退出。
 - **海面水纹**：32 簇波浪线，坐标必须落在开阔水域——改点后跑 `node scripts/check-seamarks.mjs` 校验（脚本用同一份 `land-110m.json` 与 `d3.geoContains` 逐点判陆地，有点落陆就非零退出）。
+- **边界数据**：改 `assets/vendor/china-provinces.json` 或底图代码后跑 `node scripts/check-china.mjs`——它校验 34 个省级轮廓（含台港澳）、唯一一条九段线要素、以及代码里不再出现被删的国界数据集。
 - **对比度**：① 收起态「第 47 – 49 难」那枚小徽标，文字与边框必须对底色达标（文字 ≥ 4.5:1、边框 ≥ 3:1）；② 八十一难抽屉里 81 个格子的数字分「未行 / 已行 / 当前」三态，都要 ≥ 4.5:1。改样式后跑 `node scripts/check-contrast.mjs` —— 它从 `style.css` 现读色值与 alpha，把纸底、卡顶/卡底渐变、吸顶卡头、抽屉渐变两端都算一遍取最差，不达标非零退出。
 
 ## 文件结构
@@ -69,7 +71,7 @@ index.html              单页骨架：地图、详情卡、时间轴、抽屉�
 assets/css/style.css    宣纸设色：经纬网、海岸描边、朱砂路线、印章标题
 assets/js/data.js       回目、八十一难、48 个站点、玄奘实路、地名注记
 assets/js/app.js        投影、路线、图钉、时间轴、详情、搜索、深链
-assets/vendor/          d3.min.js、topojson-client.min.js、land/countries-110m.json
+assets/vendor/          d3.min.js、topojson-client.min.js、land-110m.json、china-provinces.json
 scripts/fetch.sh        取底图用的原始下载脚本
 scripts/check-seamarks.mjs  海纹坐标的水面校验（node，无第三方依赖）
 scripts/check-stations.mjs  站点/回目/难号与「关于」分类数字的一致性校验（node，无第三方依赖）

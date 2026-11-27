@@ -3,6 +3,12 @@
 > 每轮迭代前先读本文，迭代后必须更新。字段：轮次 / 交付物 / 已知问题 / 环境。
 
 ## 迭代记录
+### 第 44 轮（U-044-01/02/03）国界：从数据层绕开
+- 删 `assets/vendor/countries-110m.json` 与它的 `topojson.mesh` 用法；新增 `china-provinces.json`（DataV，582522 B，35 feature = 34 省级 + 1 条 `100000_JD` 九段线）。
+- 今图层画 `.province` + `.nine-dash`；古图层只有 `.land` 海岸线，`.border` 节点数为 0。关于补「边界」段与「并非测绘成果」声明；README 补边界政策与校验说明。
+- `scripts/check-china.mjs` 并入 `check-all`：feature 数 35 / 省级 34 / 九段线 1 / 台港澳必须在 / 省级地名不得含「国」/ 代码不得再出现 `countries-110m`、`geoBorders` / 必须真的画了 province 与 nine-dash。
+- 实测：`check-all` 4 项全通过；页面 `.province 1 / .nine-dash 1 / .border 0 / .land 1`；切今图后 `data-base=modern`。观感未判读（无视觉通道）。
+- 见 `docs/ITERATIONS/044-borders.md`。
 ### 第 43 轮（U-043-01/02/03）回退悟空 + 人物造型规范
 - 用户 m07429 要求回退：`git checkout e831a5f -- scenes/huoyan/wukong.js`，import 前进到 `wukong.js?v=6`、`scene.js?v=42`（版本号只前进不后退，否则吃旧模块）。
 - 实测：`ready true / cards 151 / clips [] / buildMs 367`；悟空 11 卡；脚底浮空 0.04（042 修过的髋枢轴调整一并回退）。

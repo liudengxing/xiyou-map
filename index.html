@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>西游时序 · 取经路线交互舆图</title>
 <meta name="description" content="《西游记》一百回的时序与取经路线交互舆图：西行四十三站、九九八十一难、玄奘实路对照。">
-<link rel="stylesheet" href="assets/css/style.css?v=52">
+<link rel="stylesheet" href="assets/css/style.css?v=53">
 </head>
 <body>
 
@@ -135,7 +135,9 @@
 
       <hr>
 
-      <p style="font-size:11.5px;color:#6b5c48">数据：回目一百回、八十一难名目取自第九十九回难簿原文；站点定位为示意，非测绘。底图为 Natural Earth 110m 简化地物（public domain）；交互仿“江山时序”一路，用 d3 v7 手绘。</p>
+      <p><b>边界。</b>今图层只画国内省级行政区划——三十四个省级轮廓（含台湾省、香港特别行政区、澳门特别行政区）与南海九段线；<b>不加载国外的国界数据集，也不画国界线</b>。古图层只有海岸线与陆地轮廓，没有疆域界线：书里的地理本身是虚构的，画上去就是替几百年前的人表态。</p>
+
+      <p style="font-size:11.5px;color:#6b5c48">数据：回目一百回、八十一难名目取自第九十九回难簿原文；站点定位为示意，非测绘。海岸线与陆地轮廓为 Natural Earth 110m 简化地物（public domain）；省界与九段线取自阿里云 DataV 的公开行政区划边界（geojson），<span style="color:#8c2b22">仅作示意，并非测绘成果，请勿作为精确或权威的边界依据引用</span>。交互仿“江山时序”一路，用 d3 v7 手绘。</p>
     </div>
   </div>
 
@@ -157,6 +159,6 @@
 <script src="assets/vendor/d3.min.js"></script>
 <script src="assets/vendor/topojson-client.min.js"></script>
 <script src="assets/js/data.js?v=53"></script>
-<script src="assets/js/app.js?v=52"></script>
+<script src="assets/js/app.js?v=53"></script>
 </body>
 </html>

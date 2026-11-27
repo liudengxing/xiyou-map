@@ -264,3 +264,5 @@
 - [x] **U-037-06 进火焰山站自动摊开纸模 + 纸幕转场**：`enterSceneFor` + `SCENE_STATIONS` + `playSceneEnter`（`.scene-veil` 0.34s 铺开 / 0.24s 化开，`prefers-reduced-motion` 跳过）；图钉、行程表、已选中站再点三条路径都传 `{enter:true}`。验证：三条路径 `#s=29&scene=huoyan`、veil z61 出现后移除、`ready true / cards 156`；长安与键盘/时间轴不触发。
 - [ ] **站点与真实地理对齐**（30 min）：火焰山（真实吐鲁番 89.19/42.95）、车迟/西梁女国等若要对齐需逐站改并接受路线折返；也可给每站加「真实参照点」副标注而不动路线。先确认用户要哪种。
 - [ ] **名牌与纸片对话的中文排版**（15 min）：`.pd-tag` 现在 `Songti SC → STKaiti → Noto Serif SC`，Windows 缺前两者时落到 Noto；确认实际落到的字体，必要时改用 `font-family: "KaiTi","STKaiti",serif`。
+
+- [x] **国界线（争议）**（第 44 轮）：删 `countries-110m.json`，今图只画 34 省级轮廓 + 九段线，古图不画疆域界线；`check-china.mjs` 兜底。
