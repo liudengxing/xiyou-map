@@ -10,7 +10,7 @@
 | Q1 ✅（第 48 轮） | 三个 NPC 台词按回目改写（已授权） | `scenes/huoyan/people.js` | 九句台词每句标回目、不冒称原文；对话卡仍能翻页收起；`?test` 三卡仍在 |
 | Q2 ✅（第 50 轮） | 给纸件印纹样（悟空 18 卡 / 三人 18 卡 / 火墙 / 芭蕉洞） | `scenes/huoyan/print.js`（新增）、`wukong.js`、`people.js`、`scene.js` | 卡面边缘密度 0.0734 → 0.1870；`clips []`；`cards 217`、`buildMs 586`；印花按 `units:true` 给形状单位（屏幕像素算） |
 | Q3 ✅（第 49 轮，提前到 Q2 之前） | 卡面纹理分辨率（原 28×35 px → 136 px/单位） | `scenes/huoyan/wukong.js`（`CARD_RES`）、`scenes/huoyan/people.js`（`res`） | 卡面纹理密度 136 px/单位（躯干 115×183、头 99×120）、`buildMs 649 < 2000`、`cards 217` 不降、`clips []` |
-| Q4 | 火墙降密（近层 44→26）+ 焦痕按距火墙概率 | `scene.js` | `cards` 回落到 180–230；`printDetail` 不掉；肉眼风险写进文档（无法判读要注明） |
+| Q4 ✅（第 51 轮） | 火墙降密（近层 44→26）+ 焦痕按距火墙概率 | `scene.js` | `cards 217 → 199`（目标 180–230）；`printDetail 0.043 → 0.047`；`clips []`；`buildMs 629`；`walkPath 3/3`；观感待人工判读记 D-01 |
 | Q5 | 芭蕉洞 boxFold + `holes` 切口内缘描边 | `scene.js` | 洞口由 3 层平卡改 4 层带折角；切口内缘有 1 圈描边；`clips []` |
 | Q6 | 场景小坑收口：`?embed=1` 行为、深链白名单、`window.__huoyan` 收口 | `scene.js`、`app.js` | `?embed=1` 不显示提示条；未知 `scene=` 不加载 404；非 `?test` 下不暴露调试钩子 |
 | Q7 | 逐回在场名单（续）：回内粒度 | `data.js`、`app.js` | 真假美猴王 56–57 无悟空、58 有；第 43 回 / 第 76 回待核条目给出结论或标「存疑」 |

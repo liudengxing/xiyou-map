@@ -54,4 +54,5 @@
 | 047 | 2026-11-27 15:55 | 时间轴场景签 5 → 8：补两界山「心猿归正」、号山「大战红孩儿」、狮驼国「狮驼岭」，最大空档 38.3 → 21.3 | assets/js/data.js、index.html、docs/* | U-047-01/02 |
 | 048 | 2026-11-27 16:20 | 三个 NPC 的九句台词按回目改写（每句标回目），对话徽标改为「据第 xx 回改写，非原文」 | scenes/huoyan/people.js、scenes/shared/dialog.js、scenes/huoyan/scene.js、scenes/huoyan/index.html、docs/* | U-048-01/02/03 |
 | 050 | 2026-11-27 17:05 | 纸件印纹样：悟空/三人/火墙/芭蕉洞印布料·毛发·铆点·洞壁·火纸五类母题 | scenes/huoyan/print.js（新增）、wukong.js、people.js、scene.js、index.html、docs/* | U-050-01/02/03/04 |
+| 051 | 2026-11-27 17:22 | 火墙近层降密 44→26（露出焰纸裁切边）+ 焦痕改为按到火墙距离取概率 | scenes/huoyan/scene.js、index.html、docs/* | U-051-01/02/03 |
 | 049 | 2026-11-27 16:48 | 卡面纹理分辨率：悟空 40 → 136 px/单位（躯干 28×35 → 115×183），三人 res 0.8 → 2.8；buildMs 649 < 2000、cards 217 不降 | scenes/huoyan/wukong.js、scenes/huoyan/people.js、scenes/huoyan/scene.js、scenes/huoyan/index.html、docs/* | U-049-01/02/03/04 |

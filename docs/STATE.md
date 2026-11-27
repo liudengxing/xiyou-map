@@ -19,6 +19,13 @@
 - 不回退：`cards 217`（目标 180–250）、`clips []`、`buildMs 464ms`、`walkPath 3/3`；版本 `props.js?v=2`、`scene.js?v=51`。
 - 仍**无肉眼判读**（`bcdp_screenshot`/`read_image` 只回元数据），未做 A/B 盲评。见 `docs/ITERATIONS/046-foreground-props.md`。
 
+### 第 51 轮（2026-11-27）：火墙降密 + 焦痕按距取概率（Q4）
+
+- 近层火墙 44 → **26** 片（`flameRows` 第三行）：原间距约 1.2 单位比焰纸自身还窄，糊成实心色带；26 片间距约 2.0，露出焰尖与裁切边。远/中两层 36/40 不动。
+- 焦痕重写为拒绝采样：`WALL_Z = -22`，60 个候选点撒在 `x ∈ [-50,50] / z ∈ [-44,-6]`，`d = min(1, |z-WALL_Z|/18)`，`rnd() < d²` 丢弃；`near = 1-d` 决定半径（`2.0+4.2·near+rnd·4.0`）与芯色 alpha，于是贴墙焦黑、远处置零。
+- 验收：`cards 217 → 199`（目标 180–230）、`clips []`、`buildMs 629`、`printDetail 0.043 → 0.047`、`localContrast 0.058 → 0.060`、`flatPct 63.9 → 60.7`、`barePct 75.2 → 72.3`；三条 `walkPath` 各 `reached 1/1`；`?test` `cards 95`、`props {77, 16}`。
+- 观感（26 片是否过疏）**无法肉眼判读**，回退只需把 `n` 改回 36；版本 `scene.js?v=61`。
+
 ### 第 50 轮（2026-11-27）：纸件印纹样（Q2）
 
 - 新建 `scenes/huoyan/print.js?v=5`：`printCard(P, C, style)` / `withPrint(paint, C, style)`，五类母题走 paperkit-2d 的 `P.marks()` —— `cloth`（hatch+dot，悟空躯干/战裙）、`hide`（leaf+tick，头面鬓毛）、`metal`（rivet+stripe，金箍/腰带/棒）、`wall`（dab+wave，洞壁/芭蕉叶/纸灯）、`flame`（wave+dab，火墙三层）。

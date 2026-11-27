@@ -77,14 +77,20 @@ try {
       g.stroke();
     }
 
-    // 焦痕：火墙脚下被烧过的地皮——十几片边缘发虚的深赭晕，越靠火墙越密。
-    // 用径向渐变而不是实心块，纸面上是「洇开的墨」而不是一块贴图。
-    for (let i = 0; i < 18; i++) {
+    // 焦痕：火墙脚下被烧过的地皮——边缘发虚的深赭晕，**按到火墙的距离取概率**：
+    // 火墙在 z = -22，距它越近越容易落一片，越过 18 个单位就基本不再有（第 51 轮 Q4）。
+    // 做法是拒绝采样：先在 x ∈ [-50,50]、z ∈ [-44,-6] 里撒候选点，再按 1-(d/18)² 收下，
+    // 于是「贴着墙根焦黑、远处只是零星」是数据分布本身，而不是手摆出来的。
+    const WALL_Z = -22;
+    for (let i = 0; i < 60; i++) {
       const x = -50 + rnd() * 100;
-      const z = -44 + rnd() * 26;                     // 集中在 z ∈ [-44, -18]，即火墙前一带
-      const r = (2.4 + rnd() * 6.5) * ppu;
+      const z = -44 + rnd() * 38;                     // 候选 z ∈ [-44, -6]：覆盖墙后到近景
+      const d = Math.min(1, Math.abs(z - WALL_Z) / 18);
+      if (rnd() < d * d) continue;                    // 离墙远的大概率被丢掉
+      const near = 1 - d;                             // 0（远处）… 1（贴墙）
+      const r = (2.0 + near * 4.2 + rnd() * 4.0) * ppu;
       const gr = g.createRadialGradient(X(x), Z(z), 0, X(x), Z(z), r);
-      gr.addColorStop(0, 'rgba(140,43,34,' + (0.10 + rnd() * 0.10).toFixed(3) + ')');
+      gr.addColorStop(0, 'rgba(140,43,34,' + (0.10 + near * 0.10 + rnd() * 0.08).toFixed(3) + ')');
       gr.addColorStop(0.55, 'rgba(160,96,44,0.06)');
       gr.addColorStop(1, 'rgba(160,96,44,0)');
       g.fillStyle = gr;
@@ -378,7 +384,9 @@ try {
   const flameRows = [
     { z: -28, s: 3.9, n: 36, res: 0.5, halfW: 34 },   // 远：大而淡，压成一条火脊
     { z: -25, s: 2.8, n: 40, res: 0.55, halfW: 30 },
-    { z: -22, s: 1.9, n: 44, res: 0.6, halfW: 26 },   // 近：小而清，露出焰尖
+    { z: -22, s: 1.9, n: 26, res: 0.6, halfW: 26 },   // 近：小而清，露出焰尖
+    // 近层原为 44 片，间距 1.2 个单位，挤成一条实心色带、读不出单片纸焰的裁切边；
+    // 降到 26 片（间距约 2.0）后露出空隙，焰尖才立得起来（Q4，第 51 轮）。
   ];
   for (const row of flameRows) {
     for (let i = 0; i < row.n; i++) {
