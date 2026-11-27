@@ -60,5 +60,6 @@
 | 055 | 2026-11-27 17:56 | 中文排版：平台宋/楷提到 Noto 之前、修对话框 390 出屏 18px、名牌长名截断（Q8） | scenes/shared/paper-ui.css、assets/css/style.css、index.html、scenes/huoyan/index.html、docs/* | U-055-01/02/03/04 |
 | 056 | 2026-11-27 18:30 | 手机横屏地图带与标签：投影留白、详情卡 292 宽、字号变量化、候选位扩充，可见标签 9→12；「≥20」登记 D-07 | assets/js/app.js、assets/css/style.css、docs/* | U-056-01/02/03/04 |
 | 057 | 2026-11-27 18:40 | 地理数据内联为 geo-inline.js，`file://` 双击即开（图钉 48、省界与九段线正常、无 CORS）；README 改回双击说明 | assets/vendor/geo-inline.js（新）、scripts/build-geo-inline.mjs（新）、assets/js/app.js、index.html、README.md、docs/* | U-057-01/02/03/04 |
+| 058 | 2026-11-27 18:44 | `capture.py` 加 `--from-dir`：无 Playwright 也能把已有 PNG 拼成并排图（无 Pillow 回退 HTML） | scripts/papercraft/capture.py、docs/* | U-058-01/02/03 |
 | 054 | 2026-11-27 17:47 | 逐回在场名单做到回内粒度：chapters 连回、charStatus 判部分离队、纸人三档与「第 58 回归队」 | assets/js/data.js、assets/js/app.js、assets/css/style.css、index.html、docs/* | U-054-01/02/03/04 |
 | 049 | 2026-11-27 16:48 | 卡面纹理分辨率：悟空 40 → 136 px/单位（躯干 28×35 → 115×183），三人 res 0.8 → 2.8；buildMs 649 < 2000、cards 217 不降 | scenes/huoyan/wukong.js、scenes/huoyan/people.js、scenes/huoyan/scene.js、scenes/huoyan/index.html、docs/* | U-049-01/02/03/04 |

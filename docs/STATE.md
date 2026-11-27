@@ -19,6 +19,12 @@
 - 不回退：`cards 217`（目标 180–250）、`clips []`、`buildMs 464ms`、`walkPath 3/3`；版本 `props.js?v=2`、`scene.js?v=51`。
 - 仍**无肉眼判读**（`bcdp_screenshot`/`read_image` 只回元数据），未做 A/B 盲评。见 `docs/ITERATIONS/046-foreground-props.md`。
 
+### 第 58 轮（2026-11-27）：`capture.py --from-dir`（Q11）
+
+- `scripts/papercraft/capture.py` 加 `--from-dir` / `--sheet` / `--cols` / `--cell-height` 与 `sheet_from_dir()`；
+  先处理 `--from-dir` 再 import playwright，无 Playwright 也能用；无 Pillow 回退 HTML 拼版。
+- 实测：两张 1233×760 截图 → `q11-sheet.png`（**2502×802**），两格均非纯色、底色为纸色；系统 python 出 `fallback.html`。
+
 ### 第 57 轮（2026-11-27）：`file://` 双击即开（Q10）
 
 - 新增 `scripts/build-geo-inline.mjs` → `assets/vendor/geo-inline.js`（638041 B，`window.__XIYOU_GEO = {land, china}`）；

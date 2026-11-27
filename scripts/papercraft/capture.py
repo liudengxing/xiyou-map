@@ -37,6 +37,12 @@ Shots (default: overview):
                           rendered offline and muxed after (references/sound.md).
     route=SEC,FPS[,FROM];X,Z;X,Z;...  a video of the hero walking through the waypoints (steered like a stick, the
                           camera following; FROM default 3.2: the world risen); he stops at the last one
+No browser: --from-dir DIR takes the PNGs you already have (a Playwright run, an ego screenshot, a phone capture)
+and writes a side-by-side sheet, one cell per file, with each file's size under it. Use it when Playwright is not
+installed (this machine has none): nothing is re-rendered, the numbers come from what you already shot.
+--cols N sets the columns (default 2); --sheet NAME the file (default ab-sheet.png inside --out). Pillow is needed
+for the sheet; without it an HTML contact sheet is written instead, which any browser shows.
+
 Name a shot's file with NAME: before it (e.g. bridge:spot=bridge). Needs Playwright (pip install playwright; it uses
 your installed Chrome, or run `playwright install chromium`).
 """
@@ -138,13 +144,69 @@ def encode(frames_dir, fps, mp4):
     return True
 
 
+def sheet_from_dir(src, out_dir, name, cols, height):
+    """Compose the PNGs already on disk into one side-by-side sheet. No browser, no re-render."""
+    files = sorted(f for f in os.listdir(src) if f.lower().endswith('.png') and f != name)
+    if not files:
+        raise SystemExit(f'capture.py: --from-dir {src!r} has no .png')
+    os.makedirs(out_dir, exist_ok=True)
+    try:
+        from PIL import Image, ImageDraw
+    except ImportError:
+        html = os.path.join(out_dir, name.rsplit('.', 1)[0] + '.html')
+        with open(html, 'w', encoding='utf-8') as fh:
+            fh.write('<!doctype html><meta charset="utf-8"><title>sheet</title>')
+            fh.write('<body style="background:#f3e7cd;font:12px/1.6 Georgia,serif;padding:12px">')
+            fh.write(f'<div style="display:grid;grid-template-columns:repeat({cols},max-content);gap:12px">')
+            for f in files:
+                fh.write(f'<figure style="margin:0"><img src="{f}" style="max-height:{height}px">')
+                fh.write(f'<figcaption>{f}</figcaption></figure>')
+            fh.write('</div></body>')
+        print(f'Pillow is not installed: wrote an HTML contact sheet instead -> {html} ({len(files)} file(s))')
+        return
+    ims = []
+    for f in files:
+        im = Image.open(os.path.join(src, f)).convert('RGB')
+        if im.height > height:
+            im = im.resize((round(im.width * height / im.height), height), Image.LANCZOS)
+        ims.append((f, im))
+    rows = [ims[i:i + cols] for i in range(0, len(ims), cols)]
+    pad, cap = 12, 18
+    cell_w = max(im.width for _, im in ims)
+    cell_h = max(im.height for _, im in ims)
+    sheet_w = pad + cols * (cell_w + pad)
+    sheet_h = pad + len(rows) * (cell_h + cap + pad)
+    sheet = Image.new('RGB', (sheet_w, sheet_h), (243, 231, 205))
+    draw = ImageDraw.Draw(sheet)
+    for r, row in enumerate(rows):
+        y = pad + r * (cell_h + cap + pad)
+        for c, (f, im) in enumerate(row):
+            x = pad + c * (cell_w + pad)
+            sheet.paste(im, (x, y))
+            draw.text((x + 2, y + im.height + 3), f'{f}  {im.width}x{im.height}', fill=(42, 36, 28))
+    dst = os.path.join(out_dir, name)
+    sheet.save(dst)
+    print(f'{len(files)} file(s) from {src} -> {dst} ({sheet_w}x{sheet_h})')
+    for f, im in ims:
+        print(f'    {f}  {im.width}x{im.height}')
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('project'); ap.add_argument('shots', nargs='*')
+    ap.add_argument('project', nargs='?', default='.')
+    ap.add_argument('shots', nargs='*')
     ap.add_argument('--page', default='index.html'); ap.add_argument('--out', default='frames')
     ap.add_argument('--size', default='1600x900'); ap.add_argument('--ss', default='1')
     ap.add_argument('--safe', default=None, help='outline a vertical platform safe area: all | meta | tiktok | shorts')
+    ap.add_argument('--from-dir', default=None, metavar='DIR',
+                    help='no browser: compose the PNGs in DIR into a side-by-side sheet (needs Pillow, else HTML)')
+    ap.add_argument('--sheet', default='ab-sheet.png', help='sheet file name, written inside --out')
+    ap.add_argument('--cols', type=int, default=2, help='sheet columns (default 2)')
+    ap.add_argument('--cell-height', type=int, default=760, help='tallest cell in the sheet, in px (default 760)')
     a = ap.parse_args()
+    if a.from_dir:
+        src = a.from_dir
+        out_dir = a.out if os.path.isabs(a.out) else os.path.join(os.path.abspath(a.project), a.out)
+        sheet_from_dir(src, out_dir, a.sheet, a.cols, a.cell_height)
+        return
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
