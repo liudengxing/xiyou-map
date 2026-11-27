@@ -19,6 +19,15 @@
 - 不回退：`cards 217`（目标 180–250）、`clips []`、`buildMs 464ms`、`walkPath 3/3`；版本 `props.js?v=2`、`scene.js?v=51`。
 - 仍**无肉眼判读**（`bcdp_screenshot`/`read_image` 只回元数据），未做 A/B 盲评。见 `docs/ITERATIONS/046-foreground-props.md`。
 
+### 第 59 轮（2026-11-27）：小米交付包按当前代码重打（Q12）
+
+- 旧包 24 文件、`921,394 B`，缺 `scenes/huoyan/print.js`（第 50 轮）与 `assets/vendor/geo-inline.js`（第 57 轮）——包里其实是第 52 轮左右的代码。
+- 新增 `scripts/pack-delivery.py`（白名单 26 项 + 固定时间戳 + 断言 + 逐文件清单）与包内 `README.md`（1,658 B，写清双击与服务两种打开方式）；新增 `scripts/check-pack.mjs` 并并入 `check-all`（现 **5 项**）：dist↔仓库同大小、zip↔dist 一一对应、根有 `index.html`/`README.md`、无越界与禁用扩展名；交付目录不存在时 `SKIP`。
+- 新包：**27 文件 / 4,241,430 B 解压 / 1,155,864 B zip / sha256 `ce5488eb…aea0`**（连跑两次一致）；`zipfile.testzip()` → `zip ok`。
+- 运行期：`http://127.0.0.1:8124/dist/index.html` `pins 48`、三图层各 1、`geo true`、`jsonReqs 0`；`#scene=huoyan` 子页 `ready true / cards 203 / clips 0 / buildMs 590`。`file://` 双击主站同样 `pins 48`、`jsonReqs 0`；但 `file://…/scenes/huoyan/index.html` 下 `__papercraft` 不存在（模块被 CORS 拦，`#fallback` 都来不及显示）→ 场景仍须本地服务，已写进包内 README 与校验摘要。
+- `校验摘要.md` 数值与「本地启动方式」「已知限制 1」同步改写；负向测试：`dist/assets/js/app.js` 截短 1 字节 → `check-pack` 退出码 1 并指名该文件，复原后 OK。
+- 遗留：`file://` 进场景白屏未给「请用服务打开」的引导文案；白名单手写、加文件要同步；未做「从 zip 解压后再启服务」的复核。见 `docs/ITERATIONS/059-micromi-pack.md`。
+
 ### 第 58 轮（2026-11-27）：`capture.py --from-dir`（Q11）
 
 - `scripts/papercraft/capture.py` 加 `--from-dir` / `--sheet` / `--cols` / `--cell-height` 与 `sheet_from_dir()`；

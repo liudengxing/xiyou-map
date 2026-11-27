@@ -18,11 +18,11 @@
 | Q9 ⏸ blocked-D-07（第 56 轮已做可用部分：标签 9→12） | P4-22 640×360 地图带再挤 | `index.html`、`style.css`、`app.js` | 640×360 地图带 ≥96px、可见标签 ≥20、五浮层不重叠、1440/390 无回归 |
 | Q10 ✅（第 57 轮） | P4-24 `file://` 双击可开 | `assets/vendor/geo-inline.js`（新）、`app.js`、`index.html` | `file://` 下有底图与 48 图钉、控制台无 CORS；http 下等价；`check-all` 通过 |
 | Q11 ✅（第 58 轮） | P4-25 `capture.py --from-dir` | `scripts/papercraft/capture.py` | `--help` 有该参数；给一张现有截图能出并排图 |
-| Q12 | 小米交付包按当前代码重打 | `西游记时序图-小米 vibeCoding 大赛/…zip` | 包内含 `china-provinces.json`、`app.js` 有 `province`；双击 index 走本地服务说明在包内 README |
-| Q13 | P6-1 黑风山（16–17 回） | `scenes/heifengshan/` | `ready true`、`cards 100–250`、`clips []`、`buildMs < 5000` |
-| Q14 | P6-2 白虎岭（27 回） | `scenes/baihuling/` | 同上 |
-| Q15 | P6-3 盘丝洞（72–73 回） | `scenes/pansidong/` | 同上 + 丝网纸片层 |
-| Q16 | P6-4 狮驼岭（74–77 回） | `scenes/shituoling/` | 同上 + 三妖 |
+| Q12 ✅（第 59 轮） | 小米交付包按当前代码重打 | `西游记时序图-小米 vibeCoding 大赛/…zip`、`scripts/{pack-delivery.py,check-pack.mjs}` | 27 文件 / 1,155,864 B / sha256 稳定；含 `print.js`、`geo-inline.js`、包内 `README.md`（双击 + 服务两种开法）；`check-all` 5 项通过 |
+| Q13 ⏸ blocked-D-04 | P6-1 黑风山（16–17 回） | `scenes/heifengshan/` | `ready true`、`cards 100–250`、`clips []`、`buildMs < 5000` |
+| Q14 ⏸ blocked-D-04 | P6-2 白虎岭（27 回） | `scenes/baihuling/` | 同上 |
+| Q15 ⏸ blocked-D-04 | P6-3 盘丝洞（72–73 回） | `scenes/pansidong/` | 同上 + 丝网纸片层 |
+| Q16 ⏸ blocked-D-04 | P6-4 狮驼岭（74–77 回） | `scenes/shituoling/` | 同上 + 三妖 |
 
 - 每轮末尾试一次 `git push`；失败只记「待推」。
 - 被决策阻塞的项（见 `docs/DECISIONS-PENDING.md`）：P5-4c/P5-4d（D-01）、真实地理对齐（D-02）、周边注记（D-03）、P6 场景选择若换站（D-04）。

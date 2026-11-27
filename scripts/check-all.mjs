@@ -7,6 +7,7 @@
  *   - scripts/check-seamarks.mjs  海纹坐标是否落在水面
  *   - scripts/check-contrast.mjs  徽标文字与边框的 WCAG 对比度
  *   - scripts/check-china.mjs     省界/九段线数据与「不加载国界数据集」
+ *   - scripts/check-pack.mjs      交付包（小米 zip）是否还是当前代码；包不存在则跳过
  *
  * 设计取舍：
  *   - 用 `spawnSync(process.execPath, ...)` 而不是 import 那些脚本——它们写好时是
@@ -29,6 +30,7 @@ const CHECKS = [
   ["check-seamarks.mjs", "海纹坐标落在水面"],
   ["check-contrast.mjs", "徽标文字与边框的对比度"],
   ["check-china.mjs", "省界与九段线、国界数据集不再加载"],
+  ["check-pack.mjs", "交付包 dist/zip 与仓库文件一致（不存在则 SKIP）"],
 ];
 
 const results = [];

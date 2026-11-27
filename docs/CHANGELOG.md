@@ -63,3 +63,4 @@
 | 058 | 2026-11-27 18:44 | `capture.py` 加 `--from-dir`：无 Playwright 也能把已有 PNG 拼成并排图（无 Pillow 回退 HTML） | scripts/papercraft/capture.py、docs/* | U-058-01/02/03 |
 | 054 | 2026-11-27 17:47 | 逐回在场名单做到回内粒度：chapters 连回、charStatus 判部分离队、纸人三档与「第 58 回归队」 | assets/js/data.js、assets/js/app.js、assets/css/style.css、index.html、docs/* | U-054-01/02/03/04 |
 | 049 | 2026-11-27 16:48 | 卡面纹理分辨率：悟空 40 → 136 px/单位（躯干 28×35 → 115×183），三人 res 0.8 → 2.8；buildMs 649 < 2000、cards 217 不降 | scenes/huoyan/wukong.js、scenes/huoyan/people.js、scenes/huoyan/scene.js、scenes/huoyan/index.html、docs/* | U-049-01/02/03/04 |
+| 059 | 2026-11-27 18:58 | 小米交付包按当前代码重打（27 文件 / 1.10 MB / 新 sha256），新增 pack-delivery 与 check-pack 防陈旧 | 西游记时序图-小米 vibeCoding 大赛/{dist,zip,校验摘要.md}、scripts/{pack-delivery.py,check-pack.mjs,check-all.mjs}、docs/* | U-059-01/02/03/04 |
