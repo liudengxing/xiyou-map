@@ -7,6 +7,11 @@
   --pd-core: #fbf3df;
   --pd-edge: #d2bd98;
   --pd-accent: #b03a2e;
+  /* 中文衬线：**平台自带的楷/宋排在前面**，思源/Noto 这类「可能没装」的 web 字放在后面兜底。
+     Windows 落 SimSun/KaiTi，macOS 落 Songti SC/Kaiti SC；"Noto Serif SC" 只在真装了它的机器上出现，
+     不再像以前那样挡在 SimSun 前面（第 55 轮 Q8）。 */
+  --pd-serif: "Songti SC", "STSong", "SimSun", "Source Han Serif SC", "Noto Serif SC", serif;
+  --pd-kai: "Kaiti SC", "STKaiti", "KaiTi", "楷体", "Songti SC", "SimSun", serif;
   --pd-fibre: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9 .6' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .24 0 0 0 0 .15 .4 0 0 0 -.16'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
 }
 
@@ -15,10 +20,12 @@
   left: 50%;
   bottom: 26px;
   width: min(620px, calc(100vw - 32px));
+  /* 宽度含 padding 与描边：不然 390 视口下 370 + 左右各 18 + 2 边框 = 408，出屏 18px（第 55 轮 Q8 实测） */
+  box-sizing: border-box;
   transform: translate(-50%, 0);
   padding: 18px 26px 14px;
   color: var(--pd-ink);
-  font: 15px/1.75 Georgia, "Noto Serif SC", "Songti SC", serif;
+  font: 15px/1.75 var(--pd-kai);
   background: var(--pd-fibre), var(--pd-core);
   /* 双细墨框：外一道深、内一道浅，像卡纸上两次描的线 */
   border: 1px solid rgba(74, 44, 34, .82);
@@ -33,6 +40,7 @@
 
 .pd-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   gap: 10px;
   padding-bottom: 8px;
@@ -90,6 +98,7 @@
   .paper-dialog { bottom: 12px; padding: 14px 18px 12px; width: calc(100vw - 20px); font-size: 14px; }
   .pd-name { font-size: 17px; }
   .pd-role { display: none; }
+  .pd-sample { white-space: normal; margin-left: 0; }
 }
 
 /* ── 头顶名牌（网游式 id 展示）─────────────────────────────
@@ -109,11 +118,14 @@
   top: 0;
   transform: translate(-50%, -100%);
   padding: 2px 7px 3px;
-  font-family: "Songti SC", "STKaiti", "Noto Serif SC", serif;
+  font-family: var(--pd-serif);
   font-size: 11px;
   line-height: 1.2;
   letter-spacing: 0.1em;
   white-space: nowrap;
+  max-width: min(46vw, 220px);
+  overflow: hidden;
+  text-overflow: ellipsis;
   color: var(--pd-ink, #2a241c);
   background: rgba(251, 243, 223, 0.9);
   border: 1px solid rgba(74, 44, 34, 0.6);

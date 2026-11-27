@@ -269,7 +269,7 @@
 - [x] **U-037-06 进火焰山站自动摊开纸模 + 纸幕转场**：`enterSceneFor` + `SCENE_STATIONS` + `playSceneEnter`（`.scene-veil` 0.34s 铺开 / 0.24s 化开，`prefers-reduced-motion` 跳过）；图钉、行程表、已选中站再点三条路径都传 `{enter:true}`。验证：三条路径 `#s=29&scene=huoyan`、veil z61 出现后移除、`ready true / cards 156`；长安与键盘/时间轴不触发。
 - [ ] **站点与真实地理对齐**（30 min）：火焰山（真实吐鲁番 89.19/42.95）、车迟/西梁女国等若要对齐需逐站改并接受路线折返；也可给每站加「真实参照点」副标注而不动路线。先确认用户要哪种。
 - [x] **台词按回目改写** ✅ 第 48 轮完成（U-048-01/02/03）：九句台词按第 59–61 回情节重写、每句句末标回目；对话徽标由「示例，待用户确认」改为按人物写「据第 59–60 回改写，非原文」（`dialog.js` 新增 `entry.badge`，缺省仍为示例）；`people.js?v=2`、`dialog.js?v=2`、`scene.js?v=52`。实测三人徽标与首句、罗刹女 1/3→3/3→收起、`?test` 仍可开（cards 106/217 视取景）、`check-all` 4 项通过。详见 `docs/ITERATIONS/048-npc-lines-by-chapter.md`。
-- [ ] **名牌与纸片对话的中文排版**（15 min）：`.pd-tag` 现在 `Songti SC → STKaiti → Noto Serif SC`，Windows 缺前两者时落到 Noto；确认实际落到的字体，必要时改用 `font-family: "KaiTi","STKaiti",serif`。
+- [x] **名牌与纸片对话的中文排版**（第 55 轮，Q8）：两处字族改成「平台楷/宋在前、Noto 在后」（`--pd-serif` / `--pd-kai`），对话正文用楷、名牌用宋；顺带修 `.paper-dialog` 缺 `box-sizing` 导致390 视口下 408 px 出屏 18 px；名牌加 `max-width: min(46vw,220px)` + 省略号。**遗留**：字形本身无肉眼判读（本机 canvas 对任意字族都回同一宽度），只证了声明顺序与不溢出。
 
 - [x] **国界线（争议）**（第 44 轮）：删 `countries-110m.json`，今图只画 34 省级轮廓 + 九段线，古图不画疆域界线；`check-china.mjs` 兜底。
 

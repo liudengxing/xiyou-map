@@ -16,7 +16,9 @@
   --gold: #b8934a;
   --rule: rgba(90, 70, 45, 0.24);
   --rule-soft: rgba(90, 70, 45, 0.13);
-  --serif: "Songti SC", "STSong", "Noto Serif SC", "Source Han Serif SC", "Source Han Serif CN", "SimSun", serif;
+  /* 平台自带宋体在前、可能未安装的 web 字在后：Windows 落 SimSun，macOS 落 Songti SC。
+     "Noto Serif SC" 只在真装了它的机器上出现（第 55 轮 Q8 统一口径，与 scenes/shared/paper-ui.css 一致）。 */
+  --serif: "Songti SC", "STSong", "SimSun", "Source Han Serif SC", "Source Han Serif CN", "Noto Serif SC", serif;
   --kai: "STKaiti", "Kaiti SC", "KaiTi", "楷体", "Songti SC", serif;
   --shadow: 0 2px 4px rgba(60, 44, 24, 0.06), 0 14px 40px rgba(60, 44, 24, 0.12);
 }
@@ -1383,7 +1385,7 @@ body.scene-open #detail, body.scene-open .timeline { pointer-events: none; }
 .modern-layer .mcity text {
   fill: rgba(42, 36, 28, 0.78);
   letter-spacing: 0.04em;
-  font-family: "Songti SC", "Noto Serif SC", serif;
+  font-family: var(--serif);
 }
 .modern-layer .mcity.big circle { fill: #b03a2e; stroke: rgba(42, 36, 28, 0.7); }
 .modern-layer .mcity.big text { fill: #8c2b22; font-weight: 600; }
@@ -1450,7 +1452,7 @@ body.scene-open #detail, body.scene-open .timeline { pointer-events: none; }
   text-align: center;
   white-space: nowrap;
   pointer-events: auto;
-  font-family: "Songti SC", "Noto Serif SC", serif;
+  font-family: var(--serif);
 }
 .tl-era-mark b {
   display: block;
@@ -1541,7 +1543,7 @@ body.scene-open #detail, body.scene-open .timeline { pointer-events: none; }
   border-radius: 1px;
   background: var(--cinnabar);
   color: #f7efd9;
-  font-family: "Songti SC", "Noto Serif SC", serif;
+  font-family: var(--serif);
   font-size: calc(9px * var(--u, 1));
   letter-spacing: .06em;
   line-height: 1.25;

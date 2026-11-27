@@ -19,6 +19,14 @@
 - 不回退：`cards 217`（目标 180–250）、`clips []`、`buildMs 464ms`、`walkPath 3/3`；版本 `props.js?v=2`、`scene.js?v=51`。
 - 仍**无肉眼判读**（`bcdp_screenshot`/`read_image` 只回元数据），未做 A/B 盲评。见 `docs/ITERATIONS/046-foreground-props.md`。
 
+### 第 55 轮（2026-11-27）：中文排版（Q8）
+
+- 纸片 UI 两处字族把平台楷/宋提到 `"Noto Serif SC"` 之前（新增 `--pd-serif` / `--pd-kai`），对话正文改用楷体、名牌仍用宋体；主站 `--serif` 同步调整，3 处硬写字族改 `var(--serif)`。
+- 修 `.paper-dialog` 缺 `box-sizing: border-box`：390 视口原先 408 px、左移 −9 px 出屏，现在 370 px、左右各 10。
+- 名牌加 `max-width: min(46vw, 220px)` + `text-overflow: ellipsis`；窄屏 `.pd-head` 允许换行、`.pd-sample` 不再 `nowrap`。
+- 实测：1256 `[318,620,938]`、390 `[10,370,380]`、1440 `[410,620,1030]`，正文与头部 `scrollWidth ≤ clientWidth`；主站 48 枚 `.pin`；纸模三次 `ready true`。
+- 版本：`paper-ui.css?v=3`、`scene.js?v=64`、`style.css?v=56`。文档 `docs/ITERATIONS/055-chinese-typography.md`。
+
 ### 第 54 轮（2026-11-27）：逐回在场名单做到回内粒度（Q7）
 
 - `assets/js/data.js`：`away` 支持 `chapter`（单回）与 `chapters: [a,b]`（连回）；新增「第 56–57 回悟空被逐（真身去落伽山）」「第 43 回八戒与唐僧同被鼍龙摄走」两条；`away` 14 条。
@@ -165,14 +173,14 @@
 - `index.html` 资源版本抬到 `?v=48`（style.css/data.js）与 `app.js?v=50`；`node --check` 通过。
 - 全程无肉眼判读（截图工具只回元数据），结论来自 DOM 与计算样式。
 
-## 交付物清单（截至第 41 轮）
+## 交付物清单（截至第 55 轮）
 
 | 路径 | 内容 | 规模 |
 | --- | --- | --- |
-| `index.html` | 单页骨架：#stage > svg#map、纸纹 feTurbulence、印章标题、工具栏、搜索、人物条、图例、详情卡、时间轴、行程表抽屉、八十一难抽屉、关于模态（含 48 站虚构比例一段）、**纸模场景模态 `#scene-modal`（P5-6）** | 161 行 / 9315 B（含工具栏「今图」「纪年」按钮与时间轴场景签层） |
-| `assets/js/data.js` | `window.XIYOU_DATA`：100 回目、81 难、5 站前传、43 站西行、`characters` 5 人入队站、玄奘实路 23 点、14 条地名注记、6 组山形折线 | 721 行 / 42543 B（含 `modernCities` 25 城、`away` 3 条分期、`era`、`keyScenes`） |
-| `assets/js/app.js` | 投影、底图（含 32 簇海纹）、路线（含人物行迹层）、图钉（含键盘可达性）、标签避让（三档退让 + 在屏守卫 + 浮层面板障碍 + `.paneled` 退化）、时间轴、详情、搜索（含回目号直达）、人物过滤、抽屉、深链、缩放、图钉 roving tabindex 与 `aria-current`、「随行」按钮 `aria-pressed`、窄屏详情卡收起/展开（≤900 横铺时收起）、收起态难号徽标 `nanBadgeLabel()`、**纸模场景入口与 iframe 模态（`openScene/closeScene`、`#s=&scene=` 深链、Esc 两层、关闭卸 WebGL）** | 1740 行 / 74664 B（含古/今底图、站上纸人、进站开纸模、逐回在场名单与分期） |
-| `assets/css/style.css` | 宣纸设色（赭石/石青/石绿）、竖排宋楷注记、印章式标记、人物行迹石绿线、图钉焦点环、面板退化标签描边、详情卡收起骨架在 900 断点（收起 73–78px、展开 40vh 且卡头吸顶）、620 只收紧尺寸（展开 34vh）、收起态难号徽标（边框 alpha 0.8，对比度 3.54:1 起）、81 难格子未行字色 `--ink-soft`（5.84:1）、矮屏（≤480 高）断点（时间轴 84px、卡片底边 96px、随行条 top 68、展开 30vh、抽屉表头 45px）、**纸模场景模态（遮罩 blur、纸色 sheet 96vw×90vh、40px 头、提示条、`.d-scene-btn`、620px 全屏）** | 1597 行 / 47630 B（含今图层、纸幕转场、场景签、纪年锚点、`.d-away`） |
+| `index.html` | 单页骨架：#stage > svg#map、纸纹 feTurbulence、印章标题、工具栏、搜索、人物条、图例、详情卡、时间轴、行程表抽屉、八十一难抽屉、关于模态（含 48 站虚构比例一段）、**纸模场景模态 `#scene-modal`（P5-6）** | 163 行 / 9935 B（含工具栏「今图」「纪年」按钮、时间轴场景签层、纸模场景模态） |
+| `assets/js/data.js` | `window.XIYOU_DATA`：100 回目、81 难、5 站前传、43 站西行、`characters` 5 人入队站、玄奘实路 23 点、14 条地名注记、6 组山形折线 | 739 行 / 44649 B（含 `modernCities` 25 城、`away` 14 条分期（含连回与部分离队）、`era`、`keyScenes` 8 条） |
+| `assets/js/app.js` | 投影、底图（含 32 簇海纹）、路线（含人物行迹层）、图钉（含键盘可达性）、标签避让（三档退让 + 在屏守卫 + 浮层面板障碍 + `.paneled` 退化）、时间轴、详情、搜索（含回目号直达）、人物过滤、抽屉、深链、缩放、图钉 roving tabindex 与 `aria-current`、「随行」按钮 `aria-pressed`、窄屏详情卡收起/展开（≤900 横铺时收起）、收起态难号徽标 `nanBadgeLabel()`、**纸模场景入口与 iframe 模态（`openScene/closeScene`、`#s=&scene=` 深链、Esc 两层、关闭卸 WebGL）** | 1812 行 / 78949 B（含古/今底图、站上纸人、进站开纸模、逐回在场名单与分期、回内粒度的 `charStatus`/`fig-part`） |
+| `assets/css/style.css` | 宣纸设色（赭石/石青/石绿）、竖排宋楷注记、印章式标记、人物行迹石绿线、图钉焦点环、面板退化标签描边、详情卡收起骨架在 900 断点（收起 73–78px、展开 40vh 且卡头吸顶）、620 只收紧尺寸（展开 34vh）、收起态难号徽标（边框 alpha 0.8，对比度 3.54:1 起）、81 难格子未行字色 `--ink-soft`（5.84:1）、矮屏（≤480 高）断点（时间轴 84px、卡片底边 96px、随行条 top 68、展开 30vh、抽屉表头 45px）、**纸模场景模态（遮罩 blur、纸色 sheet 96vw×90vh、40px 头、提示条、`.d-scene-btn`、620px 全屏）** | 1613 行 / 48539 B（含今图层、纸幕转场、8 枚场景签、纪年锚点、`.d-away`/`.d-away-part`；`--serif` 平台字体优先） |
 | `#scene-modal`（P5-6 新增） | 纸模场景模态：遮罩 + 纸色 sheet（96vw×90vh，620px 下全屏）+ 40px 标题栏 + iframe 视口 + 操作提示条；`.d-scene-btn` 入口按钮 | `index.html` + `style.css` 内 |
 | `assets/vendor/` | d3.min.js 7.9.0、topojson-client.min.js 3.1.0、land-110m.json、china-provinces.json（DataV 省界，35 feature = 34 省级 + 九段线；原 `countries-110m.json` 已于第 44 轮删除） | — |
 | `README.md` | 运行法、「西游记有地图吗」三问三答、快捷键表（含回目直达、人物行迹、窄屏收起、手机横屏）、数据来源（含三条构建期校验与 `check-all` 一把跑）、结构说明 | 76 行 / 7107 B |
