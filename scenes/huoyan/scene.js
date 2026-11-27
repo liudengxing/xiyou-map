@@ -4,9 +4,9 @@
 // P5-4 T 型悟空与走动寻路、P5-5 三名人物与纸片对话。占位立牌在 P5-4 会被真正的纸模替掉。
 import { createHarness } from '../vendor/papercraft/harness.js';
 import { buildWukong, HERO_H } from './wukong.js?v=9';
-import { buildPeople } from './people.js';
+import { buildPeople } from './people.js?v=2';
 import { buildProps } from './props.js?v=2';
-import { createDialog } from '../shared/dialog.js';
+import { createDialog } from '../shared/dialog.js?v=2';
 import * as THREE from 'three';
 
 // 调色板从主站宣纸色推导（实现文档 §5 PALETTE）：宣纸底、赭石、朱砂，阴影用暖赭，禁灰黑纯白

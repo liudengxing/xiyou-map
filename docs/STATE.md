@@ -19,6 +19,14 @@
 - 不回退：`cards 217`（目标 180–250）、`clips []`、`buildMs 464ms`、`walkPath 3/3`；版本 `props.js?v=2`、`scene.js?v=51`。
 - 仍**无肉眼判读**（`bcdp_screenshot`/`read_image` 只回元数据），未做 A/B 盲评。见 `docs/ITERATIONS/046-foreground-props.md`。
 
+### 第 48 轮（2026-11-27）：三个 NPC 的九句台词按回目改写（Q1）
+
+- 用户已授权按回目改写（m07937）。`scenes/huoyan/people.js` 十二行台词段整体重写：罗刹女（第59回记恨借扇 / 第59回扇子功效 / 第60回假扇越扇越旺）、牛魔王（第60回碧波潭赴宴 / 第60回被骗扇 / 第61回被哪吒穿鼻擒住）、八戒（第59回路阻火焰山 / 第61回助力败魔王 / 第61回扇熄过山），**每句句末标回目号**；每人新增 `badge`。
+- `scenes/shared/dialog.js`：右上徽标改为 `entry.badge || "示例，待用户确认"`（缺省行为不变，其他场景与模板不受影响）。
+- 版本：`scene.js` 的 import 抬 `people.js?v=2` 与 `../shared/dialog.js?v=2`；`scenes/huoyan/index.html` 抬 `scene.js?v=52`。
+- 实测：`ready true / cards 217 / clips 0 / buildMs 594ms`；三人徽标分别为「据第59–60回改写，非原文」「据第60–61回改写，非原文」「据第59、61回改写，非原文」；罗刹女 1/3→2/3→3/3（末句按钮变「收起」）→ 收起 `hidden true`；`?test` 仍可开（`buildMs 687 / props 77 片`），`scene.js` diff 仅两行 import。`check-all` 4 项通过。
+- 仍无肉眼判读（截图只回元数据）。见 `docs/ITERATIONS/048-npc-lines-by-chapter.md`。
+
 ### 第 47 轮（2026-11-27）：时间轴场景签 5 → 8（补空隙）
 
 - 用户说时间轴上的场景签显得空，要再挑三个时间让分布均匀。
@@ -130,9 +138,9 @@
 | `scripts/check-all.mjs` | 一次跑完上面三条校验：`spawnSync` 逐条执行、原样转印输出、末尾汇总表；任一失败 `exit 1`，但不短路（其余照跑） | 58 行 / 2650 B |
 | `docs/` | STATE / BACKLOG / CHANGELOG / ITERATIONS 四件套 | 迭代协议要求的归档 |
 | `scenes/vendor/` | three r187（`three.module.js` 658900 B + `three.core.js` 1474799 B）、papercraft 运行时 `papercraft/{harness.js(原样未改), lib/{paperkit-2d,paperkit-3d,paper-motion,paper-life,paper-sound}.js, lights.json}` | 全部本地，无 CDN |
-| `scenes/huoyan/` | P5-1~P5-5：本地 importmap、纸色底、WebGL 失败兜底；`scene.js` 印焦赭戈壁（赭石淡染 + 520 条龟裂 + 26 条风卷灰线 + 18 片焦痕）、三层纸焰火墙（120 片）、芭蕉洞（`holes` 门洞/纸灯/芭蕉叶）、11 张卡 T 型纸偶悟空 + stride 步态 + 点击地面寻路、**三位纸人（罗刹女/牛魔王/八戒，各 6 卡）+ 点人或按 E 弹纸片对话**，`?test` 下印三张测试卡 | `index.html`（`scene.js?v=37`）/ `scene.js` 20858 B（含第 36 轮地面印花 + 第 37 轮 NPC 名牌与走近说话）/ `wukong.js` 11581 B（238 行）/ `people.js` 12009 B（300 行）/ `README.md`（15 行 spec + 偏差表 + §8 验收表） |
+| `scenes/huoyan/` | P5-1~P5-5：本地 importmap、纸色底、WebGL 失败兜底；`scene.js` 印焦赭戈壁（赭石淡染 + 520 条龟裂 + 26 条风卷灰线 + 18 片焦痕）、三层纸焰火墙（120 片）、芭蕉洞（`holes` 门洞/纸灯/芭蕉叶）、11 张卡 T 型纸偶悟空 + stride 步态 + 点击地面寻路、**三位纸人（罗刹女/牛魔王/八戒，各 6 卡）+ 点人或按 E 弹纸片对话**，`?test` 下印三张测试卡 | `index.html`（`scene.js?v=37`）/ `scene.js` 20858 B（含第 36 轮地面印花 + 第 37 轮 NPC 名牌与走近说话）/ `wukong.js` 11581 B（238 行）/ `people.js` 12226 B（303 行，第 48 轮台词按回目改写）/ `README.md`（15 行 spec + 偏差表 + §8 验收表） |
 | `scenes/_template/` | **P5-7 提炼的场景模板**：`index.html`（本地 importmap、纸色底、WebGL 兜底）+ `scene.js`（四处「改这里」：PALETTE / `printGround` 地面印花 / T 型纸偶 HERO / `bounds·walkArea·camBox·view`；含 `onStep` 逐帧 steer 与 pointerdown 射线落点）+ `README.md`（复制步骤、改动表、十条验收清单、基线数字、互穿坑） | `index.html` 1724 B / `scene.js` 约 9.6 K / `README.md`；实测 `ready true / cards 7 / buildMs 166 / clips [] / walkPath 3/3` |
-| `scenes/shared/` | 纸片 UI 与对话：`paper-ui.css`（纸色卡、双细墨框、`.pd-tag` 名牌）、`dialog.js`（逐字、Enter/空格翻页、Esc 收起） | `paper-ui.css` 5190 B / `dialog.js` 4190 B |
+| `scenes/shared/` | 纸片 UI 与对话：`paper-ui.css`（纸色卡、双细墨框、`.pd-tag` 名牌）、`dialog.js`（逐字、Enter/空格翻页、Esc 收起） | `paper-ui.css` 5190 B / `dialog.js` 4326 B（第 48 轮徽标可配） |
 | `scripts/papercraft/` | 纸模配套工具（原样取自 skill）：`capture.py` / `measure.py` / `ab_sheet.py` / `paper_textures.py`，P5-2 起接入验收 | — |
 | `docs/papercraft-skill/` | skill 参考资料副本：`SKILL.md` + `references/` 15 篇（材料定律、光、结构、动效、格式等），供 P5-2~P5-5 查阅 | 508 K |
 

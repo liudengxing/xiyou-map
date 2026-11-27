@@ -265,7 +265,7 @@
 - [x] **U-037-05 NPC 名牌 + 走近说话**：`.pd-tags` DOM 纸签层，每帧 `project` 定位；2.4 步自动弹、3.2 步重新上膛。验证：4 枚名牌坐标合理；`place(-8.6,-11.2)` → 罗刹女 1/3；关闭后不重弹、走远再回来又弹。
 - [x] **U-037-06 进火焰山站自动摊开纸模 + 纸幕转场**：`enterSceneFor` + `SCENE_STATIONS` + `playSceneEnter`（`.scene-veil` 0.34s 铺开 / 0.24s 化开，`prefers-reduced-motion` 跳过）；图钉、行程表、已选中站再点三条路径都传 `{enter:true}`。验证：三条路径 `#s=29&scene=huoyan`、veil z61 出现后移除、`ready true / cards 156`；长安与键盘/时间轴不触发。
 - [ ] **站点与真实地理对齐**（30 min）：火焰山（真实吐鲁番 89.19/42.95）、车迟/西梁女国等若要对齐需逐站改并接受路线折返；也可给每站加「真实参照点」副标注而不动路线。先确认用户要哪种。
-- [ ] **台词按回目改写（用户 m07937 已授权，不必再确认原文）**（15 min）：三个 NPC 各三句现为「示例台词」；改法——每句只写**该回正在发生的事**（罗刹女：第 59 回先借扇被拒、第 61 回扇熄火反旺、第 61 回献扇救火；牛魔王：第 60 回赴宴、第 61 回现本相、被收；八戒：第 61 回助战、第 61 回被扇到小须弥）；不冒称原文，每句下方仍留「回目：第 N 回」。改 `scenes/huoyan/people.js` 的台词数组 + 抬 `scene.js`/`people.js` 双版本号。
+- [x] **台词按回目改写** ✅ 第 48 轮完成（U-048-01/02/03）：九句台词按第 59–61 回情节重写、每句句末标回目；对话徽标由「示例，待用户确认」改为按人物写「据第 59–60 回改写，非原文」（`dialog.js` 新增 `entry.badge`，缺省仍为示例）；`people.js?v=2`、`dialog.js?v=2`、`scene.js?v=52`。实测三人徽标与首句、罗刹女 1/3→3/3→收起、`?test` 仍可开（cards 106/217 视取景）、`check-all` 4 项通过。详见 `docs/ITERATIONS/048-npc-lines-by-chapter.md`。
 - [ ] **名牌与纸片对话的中文排版**（15 min）：`.pd-tag` 现在 `Songti SC → STKaiti → Noto Serif SC`，Windows 缺前两者时落到 Noto；确认实际落到的字体，必要时改用 `font-family: "KaiTi","STKaiti",serif`。
 
 - [x] **国界线（争议）**（第 44 轮）：删 `countries-110m.json`，今图只画 34 省级轮廓 + 九段线，古图不画疆域界线；`check-china.mjs` 兜底。

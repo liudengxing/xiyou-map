@@ -52,3 +52,4 @@
 | 045 | 2026-11-27 15:05 | 孙悟空纸偶改铰链版：18 张卡、肩肘髋膝四处转轴、配色改用铰链设计图那族 | scenes/huoyan/wukong.js、scenes/huoyan/scene.js、scenes/huoyan/index.html、docs/* | U-045-01/02/03/04 |
 | 046 | 2026-11-27 15:35 | 火焰山加前景纸件：10 组远件 + 6 组近件 + 近地硬边印花，printDetail 0.008→0.044、flatPct 93→63（PASS） | scenes/huoyan/props.js（新增）、scenes/huoyan/scene.js、scenes/huoyan/index.html、docs/* | U-046-01/02/03/04 |
 | 047 | 2026-11-27 15:55 | 时间轴场景签 5 → 8：补两界山「心猿归正」、号山「大战红孩儿」、狮驼国「狮驼岭」，最大空档 38.3 → 21.3 | assets/js/data.js、index.html、docs/* | U-047-01/02 |
+| 048 | 2026-11-27 16:20 | 三个 NPC 的九句台词按回目改写（每句标回目），对话徽标改为「据第 xx 回改写，非原文」 | scenes/huoyan/people.js、scenes/shared/dialog.js、scenes/huoyan/scene.js、scenes/huoyan/index.html、docs/* | U-048-01/02/03 |

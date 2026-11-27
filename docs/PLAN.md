@@ -7,7 +7,7 @@
 
 | # | 事项 | 主要文件 | 验收 |
 | --- | --- | --- | --- |
-| Q1 | 三个 NPC 台词按回目改写（已授权） | `scenes/huoyan/people.js` | 九句台词每句标回目、不冒称原文；对话卡仍能翻页收起；`?test` 三卡仍在 |
+| Q1 ✅（第 48 轮） | 三个 NPC 台词按回目改写（已授权） | `scenes/huoyan/people.js` | 九句台词每句标回目、不冒称原文；对话卡仍能翻页收起；`?test` 三卡仍在 |
 | Q2 | 给纸件印纹样（悟空 18 卡 / 三人 18 卡 / 火墙 / 芭蕉洞） | `wukong.js`、`people.js`、`scene.js` | `measure.py` 的 `printDetail` 与 `localContrast` 上升；`clips []`；印花线宽 ≥2 px、α≥0.18 |
 | Q3 | 卡面纹理分辨率（现 28×35 px） | `harness` 调用处的 `res` / `cardOpts` | 卡面纹理边长 ≥ 96 px；`buildMs < 2000`；`cards` 不降 |
 | Q4 | 火墙降密（近层 44→26）+ 焦痕按距火墙概率 | `scene.js` | `cards` 回落到 180–230；`printDetail` 不掉；肉眼风险写进文档（无法判读要注明） |

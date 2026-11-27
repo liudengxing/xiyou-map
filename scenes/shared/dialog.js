@@ -1,7 +1,7 @@
 // scenes/shared/dialog.js —— 纸片对话框（P5-5）。
 // 只用 DOM 文本（可选中、可读屏），不把字烘进 canvas；一次显示一位人物的一段话。
 // 交互：点击卡面 / Enter / 空格 → 显示下一句（或逐字未打完时立刻打完）；Esc → 关闭。
-// 关闭时回调 onClose，由场景恢复走动。文案由调用方提供，必须自带「示例」标注。
+// 关闭时回调 onClose，由场景恢复走动。文案由调用方提供；entry.badge 决定右上角徽标（默认「示例，待用户确认」）。
 
 const TYPE_MS = 26;
 
@@ -51,6 +51,7 @@ export function createDialog({ onClose } = {}) {
     if (!e) return;
     root.querySelector('.pd-name').textContent = e.name;
     root.querySelector('.pd-role').textContent = e.role || '';
+    root.querySelector('.pd-sample').textContent = e.badge || '示例，待用户确认';
     root.querySelector('.pd-hop').textContent = (state.index + 1) + ' / ' + e.lines.length;
     moreBtn.textContent = state.index >= e.lines.length - 1 ? '收起' : '继续 ›';
     textEl.innerHTML = '';
