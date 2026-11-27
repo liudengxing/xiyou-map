@@ -114,7 +114,7 @@
 | `assets/js/app.js` | 投影、底图（含 32 簇海纹）、路线（含人物行迹层）、图钉（含键盘可达性）、标签避让（三档退让 + 在屏守卫 + 浮层面板障碍 + `.paneled` 退化）、时间轴、详情、搜索（含回目号直达）、人物过滤、抽屉、深链、缩放、图钉 roving tabindex 与 `aria-current`、「随行」按钮 `aria-pressed`、窄屏详情卡收起/展开（≤900 横铺时收起）、收起态难号徽标 `nanBadgeLabel()`、**纸模场景入口与 iframe 模态（`openScene/closeScene`、`#s=&scene=` 深链、Esc 两层、关闭卸 WebGL）** | 1740 行 / 74664 B（含古/今底图、站上纸人、进站开纸模、逐回在场名单与分期） |
 | `assets/css/style.css` | 宣纸设色（赭石/石青/石绿）、竖排宋楷注记、印章式标记、人物行迹石绿线、图钉焦点环、面板退化标签描边、详情卡收起骨架在 900 断点（收起 73–78px、展开 40vh 且卡头吸顶）、620 只收紧尺寸（展开 34vh）、收起态难号徽标（边框 alpha 0.8，对比度 3.54:1 起）、81 难格子未行字色 `--ink-soft`（5.84:1）、矮屏（≤480 高）断点（时间轴 84px、卡片底边 96px、随行条 top 68、展开 30vh、抽屉表头 45px）、**纸模场景模态（遮罩 blur、纸色 sheet 96vw×90vh、40px 头、提示条、`.d-scene-btn`、620px 全屏）** | 1597 行 / 47630 B（含今图层、纸幕转场、场景签、纪年锚点、`.d-away`） |
 | `#scene-modal`（P5-6 新增） | 纸模场景模态：遮罩 + 纸色 sheet（96vw×90vh，620px 下全屏）+ 40px 标题栏 + iframe 视口 + 操作提示条；`.d-scene-btn` 入口按钮 | `index.html` + `style.css` 内 |
-| `assets/vendor/` | d3.min.js 7.9.0、topojson-client.min.js 3.1.0、land-110m.json、countries-110m.json | — |
+| `assets/vendor/` | d3.min.js 7.9.0、topojson-client.min.js 3.1.0、land-110m.json、china-provinces.json（DataV 省界，35 feature = 34 省级 + 九段线；原 `countries-110m.json` 已于第 44 轮删除） | — |
 | `README.md` | 运行法、「西游记有地图吗」三问三答、快捷键表（含回目直达、人物行迹、窄屏收起、手机横屏）、数据来源（含三条构建期校验与 `check-all` 一把跑）、结构说明 | 76 行 / 7107 B |
 | `scripts/check-seamarks.mjs` | 海纹坐标的构建期校验：从 `app.js` 抠 `seaMarks` 字面量，用 `land-110m.json` + `d3.geoContains` 判陆地，落陆/点数≠32/超范围非零退出 | 115 行 |
 | `scripts/check-stations.mjs` | 站点一致性校验：48 站 / 100 回目 / 1–81 难无缺无重、回目沿站序单调、经纬度在图幅内，并把「关于」里的 8/15/24 分类数字与 `modern` 现算结果比对 | 156 行 / 8017 B |
