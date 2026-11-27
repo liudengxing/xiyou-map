@@ -43,3 +43,4 @@
 | 036 | 2026-11-27 03:52 | P5-8（半）：地面压曝光 + 四层印花（色斑/砾石簇/风蚀划痕/纸纤维），lumaP50 0.765→0.712、toothRms 0.0098→0.0106 回到门限，printDetail 仍 0.003 | scenes/huoyan/scene.js、docs/* | U-036-01 |
 | 037 | 2026-11-27 11:40 | 用户五条：实路 `.on` 修复、43 站不等距重排、古/今底图切换、站上纸人队列、NPC 头顶名牌 + 走近说话、进火焰山站自动摊开纸模（纸幕转场） | assets/js/{app,data}.js、assets/css/style.css、index.html、scenes/shared/paper-ui.css、scenes/huoyan/{scene.js,index.html}、docs/* | U-037-01~06 |
 | 038 | 2026-11-27 12:58 | 纪年层走 A+C：两处硬锚点 + 小说/史实双轨对照，末端锚点右对齐，关于弹窗补「回序轴」并订正十七年 | assets/js/data.js、assets/js/app.js、assets/css/style.css、index.html、docs/* | U-038-01 |
+| 039 | 2026-11-27 13:26 | 逐回在场名单：新增 away（八戒巡山/沙僧讨行李/唐僧化斋），详情卡「分期」行，分期者不计入同行 | assets/js/data.js、assets/js/app.js、assets/css/style.css、index.html、docs/* | U-039-01/02/03 |

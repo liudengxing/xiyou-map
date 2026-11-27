@@ -1489,6 +1489,24 @@ body.scene-open #detail, body.scene-open .timeline { pointer-events: none; }
   color: rgba(42, 36, 28, .68);
 }
 
+/* 分期：这一站跨的回目里有谁单独行动去了。比「同行」再细一层，所以字更小、
+   用朱砂的细线在左侧引一下，跟正文的墨色区分开。 */
+.d-away {
+  margin: 0 0 6px;
+  padding-left: 7px;
+  border-left: 1px solid rgba(176, 58, 46, .55);
+  font-size: calc(10px * var(--u, 1));
+  letter-spacing: .03em;
+  line-height: 1.5;
+  color: rgba(42, 36, 28, .72);
+}
+.d-away b {
+  margin-right: 6px;
+  font-weight: 400;
+  color: rgba(140, 43, 34, .9);
+}
+.d-away span { letter-spacing: .02em; }
+
 /* 窄屏轴只剩一条窄带，年月字会压住回目标签：只留详情卡里的纪年 */
 @media (max-width: 620px) {
   .tl-era { display: none; }

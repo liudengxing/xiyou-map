@@ -509,6 +509,13 @@
     });
   }
 
+  /* 这一站覆盖的回目里，有没有谁离开队伍去办别的事（D.away 里那几条） */
+  function awayAt(n) {
+    if (n.act !== "journey" || !D.away) return [];
+    var s = stationSpan(n);
+    return D.away.filter(function (a) { return a.chapter >= s.a && a.chapter <= s.b; });
+  }
+
   /* 已经入过队、但这一站覆盖的回目里他不在（被逐 / 暂离），详情卡上单独标一笔 */
   function steppedOutAt(n) {
     var s = stationSpan(n);
@@ -832,10 +839,24 @@
         }).join("") + "</div>";
     }
 
-    // 同行：逐回名单里此刻在队伍里的人；被逐/暂离的单独标一笔，免得读者以为漏了谁
+    // 分期：这一站跨的回目里有谁单独行动去了（只录能对着回目说清的那几条）
+    var away = "";
+    var apart = awayAt(n);
+    var apartIds = apart.map(function (a) { return a.who; });
+    if (apart.length) {
+      var shortOf = {};
+      (D.characters || []).forEach(function (c) { shortOf[c.id] = c.short; });
+      away = apart.map(function (a) {
+        return '<div class="d-away" title="' + String(a.why || "").replace(/"/g, "") + '">' +
+          "<b>第 " + a.chapter + " 回</b><span>" + (shortOf[a.who] || a.who) + " · " + a.what + "</span></div>";
+      }).join("");
+    }
+    // 同行：逐回名单里此刻在队伍里的人；被逐/暂离的单独标一笔，免得读者以为漏了谁。
+    // 这一回单独行动的人不计入「同行」——他人在这一回里不在队伍边上。
     var folk = "";
     if (n.act === "journey") {
-      var here = presentAt(n).map(function (c) { return c.short; });
+      var here = presentAt(n).filter(function (c) { return apartIds.indexOf(c.id) < 0; })
+        .map(function (c) { return c.short; });
       var out = steppedOutAt(n).map(function (c) { return c.short + "（离队）"; });
       var all = here.concat(out);
       if (all.length) folk = '<div class="d-folk">同行：' + all.join(" · ") + "</div>";
@@ -879,7 +900,7 @@
       // 今地与「站 / 妖」两个标签放进独立的 .d-meta：窄屏展开态只有 .d-head 吸顶，
       // 若把这几行也塞进卡头，287px 的卡里光卡头就占掉 194px。
       '<div class="d-meta">' +
-        '<div class="d-modern">' + n.modern + "</div>" + era + folk +
+        '<div class="d-modern">' + n.modern + "</div>" + era + folk + away +
         '<div class="d-tags">' + tags.join("") + "</div>" +
       "</div>" +
       '<div class="d-sec-title">情节</div>' +
