@@ -1595,3 +1595,5 @@ body.scene-open #detail, body.scene-open .timeline { pointer-events: none; }
   margin: 0 0 8px;
 }
 @media (max-width: 900px) { .tl-era-cap { display: none; } }
+/* 这一回单独行动的人：人还在队伍里，画淡、描虚线 —— 一眼能看出「他不在这儿」 */.pin .party .fig-away { opacity: .38; }.pin .party .fig-away path,
+.pin .party .fig-away circle { stroke-dasharray: 1.1 .9; }

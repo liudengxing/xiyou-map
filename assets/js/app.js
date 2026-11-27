@@ -459,7 +459,7 @@
       var totalW = mates.length * figW + (mates.length - 1) * gap;
       mates.forEach(function (c, i) {
         var x = -totalW / 2 + i * (figW + gap) + figW / 2;
-        var f = g.append("g").attr("class", "fig fig-" + c.id)
+        var f = g.append("g").attr("class", "fig fig-" + c.id + (c.away ? " fig-away" : ""))
           .attr("transform", "translate(" + (x * U) + "," + (9.4 * U) + ") scale(" + U + ")");
         f.append("path").attr("d", "M-1.75,0 L1.75,0 L1.3,-4.7 L-1.3,-4.7 Z")
           .attr("fill", c.color).attr("stroke", "rgba(42,36,28,.55)").attr("stroke-width", 0.32);
@@ -528,8 +528,13 @@
 
   function partyOf(n) {
     if (n.act !== "journey") return [];
+    // 这一回单独行动的人照样画出来，但是画淡——人还在，只是不在队伍边上
+    var apart = awayAt(n).map(function (a) { return a.who; });
     return presentAt(n).map(function (c) {
-      return { id: c.id, name: c.short, color: charColors[c.id] || "#d7bd93" };
+      return {
+        id: c.id, name: c.short, color: charColors[c.id] || "#d7bd93",
+        away: apart.indexOf(c.id) >= 0
+      };
     });
   }
 
