@@ -3,7 +3,7 @@
 // 后续按 docs/PAPERCRAFT-IMPLEMENTATION.md 第 9 节排期逐轮加：P5-2 测试卡、P5-3 地面与八百里火墙、芭蕉洞、
 // P5-4 T 型悟空与走动寻路、P5-5 三名人物与纸片对话。占位立牌在 P5-4 会被真正的纸模替掉。
 import { createHarness } from '../vendor/papercraft/harness.js';
-import { buildWukong, HERO_H } from './wukong.js?v=6';
+import { buildWukong, HERO_H } from './wukong.js?v=9';
 import { buildPeople } from './people.js';
 import { createDialog } from '../shared/dialog.js';
 import * as THREE from 'three';

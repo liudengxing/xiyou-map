@@ -1,42 +1,67 @@
-// 火焰山纸模 · 主角孙悟空（T 型纸偶，11 张卡）
+// 火焰山纸模 · 主角孙悟空（铰链纸偶，18 张卡）
 //
-// 做法照 docs/papercraft-skill/references/mechanisms.md 第 12 节「Characters from cards」：
-//   每一部分都是两张卡（正面卡 + 紧跟其后的侧面卡）拼出的 T；四肢用髋/肩枢轴摆动；
-//   分层从前往后是 脸 → 身体 → 手臂 → 腿，层与层之间至少隔一张卡厚（0.08），否则走动时会互穿。
-// 硬约束（都被 clips() 检查）：
-//   ① 手臂、腿的轮廓在**正面**上不能压住身体轮廓（否则摆动时扫过身体那一层）；
-//   ② 侧面卡整张在正面卡之后，绝不可穿过它；
-//   ③ 每张卡都有唯一 z（不出现两个相等深度，转角时不会闪）。
+// 这一版照「铰链纸模」的思路重做：四肢不是一根整卡，而是上臂/前臂、大腿/小腿各自成卡，
+// 在肩、肘、髋、膝四处各有一根转轴（8 个 Group）。纸的厚度是可见的，弯折处才读得出是纸偶。
+// 层序（由后往前）与深度都列在 Z 里：相邻两层至少隔一张卡厚（0.08），clips() 就是查这个。
+// 其余照 docs/papercraft-skill/references/mechanisms.md §12「Characters from cards」与
+// docs/PAPERCRAFT-CHARACTER-SPEC.md：每部件一正一侧、四肢枢轴在躯干轮廓之外、两腿不互叠。
 import * as THREE from 'three';
 import { makeCard } from 'papercraft/lib/paperkit-3d.js';
 
+// 配色取自 角色详设/孙悟空铰链纸模设计图.png 的量化主色（暖红褐 + 纸黄，不含蓝绿）
 const C = {
-  page: '#f3e7cd', deep: '#ead8b6', ochre: '#d7bd93', ochreD: '#bfa072',
-  burnt: '#8c2b22', ember: '#b03a2e', gold: '#b8934a', jade: '#3f6b4a',
-  ink: '#2a241c', face: '#efdcc0', faceD: '#dcc39c',
+  ink: '#2a241c',
+  deep: '#56260c',
+  ember: '#ae3712',
+  emberLit: '#c8401a',
+  ochre: '#d18634',
+  ochreL: '#f4b96d',
+  paperL: '#fbd49b',
+  face: '#f3c58c',
+  faceD: '#dfa868',
+  gold: '#b8934a',
 };
 
-// 主角总高（与 createHarness 的 heroHeight 一致）
 export const HERO_H = 3.6;
 
+const T = 0.08;              // 一张卡的厚度
+const MZ = 0.004;            // 左右同名卡之间微小的 z 差，保证每张卡 z 唯一
+
+// 深度表：世界 z。数值接近的两张卡，一定是 x 或 y 上不重叠的。
+const Z = {
+  staff: -0.52,
+  forearm: -0.30,
+  shin: -0.23,
+  arm: -0.20,
+  torsoSide: -0.10,
+  torso: 0,
+  headSide: 0.02,
+  head: 0.10,
+  pauldron: 0.13,
+  skirt: 0.14,
+  crown: 0.20,
+  belt: 0.24,
+};
+
 /**
- * 拼一只孙悟空，返回 { rig, parts, stride }。
- * rig 直接交给 H.setHero(rig, { stride })，由 harness 负责行走、转向与前倾。
- * 局部坐标：y 向上、单位与世界一致（脚底 y=0，头顶 3.6），面朝 +z。
+ * 拼一只铰链版孙悟空，返回 { handle, stride, parts }。
+ * 局部坐标：y 向上，脚底 y=0、头顶 3.6，面朝 +z；rig 交给 H.setHero(handle, { stride })。
  */
 export function buildWukong(H, { x = 0, z = 3 } = {}) {
   const rig = new THREE.Group();
   rig.name = 'wukong';
   rig.position.set(x, 0, z);
 
-  // 上身（躯干 + 头 + 金箍 + 手臂 + 虎皮裙）挂在 body 上：走起来整体轻微起伏，腿不跟着升
+  // 上身挂在 body 上：走起来整体起伏，腿不跟着升
   const body = new THREE.Group();
   body.name = 'wukong-body';
   rig.add(body);
 
-  /** 造一张卡：pts 用局部坐标（y 向上），dz 是本层深度。 */
-  const card = (name, pts, paint, dz, parent = body) => {
-    const m = makeCard(pts, { ...H.cardOpts(x, z), paint, thickness: 0.08, edgeWidth: 0.08, folds: ['bottom'] });
+  const opts = () => ({ ...H.cardOpts(x, z), thickness: T, edgeWidth: 0.08 });
+
+  /** 造一张卡；pts 用父级局部坐标，dz 是本层相对父级的深度。 */
+  const card = (name, pts, paint, dz, parent = body, folds = ['top']) => {
+    const m = makeCard(pts, { ...opts(), paint, folds });
     m.name = name;
     m.position.z = dz;
     m.castShadow = true;
@@ -45,195 +70,299 @@ export function buildWukong(H, { x = 0, z = 3 } = {}) {
     return m;
   };
 
-  // ---- 躯干（赭石短打 + 朱砂腰带）----------------------------------------------
-  // 半宽容到 0.42，是为了让两只手臂（内缘 0.44）在正面上永远不压住躯干。
-  const torsoPts = [[-0.38, 1.12], [0.38, 1.12], [0.42, 2.10], [0.40, 2.46], [-0.40, 2.46], [-0.42, 2.10]];
-  card('wukong-torso', torsoPts, (P) => {
-    const { g, box } = P;
-    P.fill(C.ochre);
-    // 斜襟的墨线：从右肩到左腰
-    g.strokeStyle = C.ink; g.globalAlpha = 0.55; g.lineWidth = 2.2;
-    g.beginPath();
-    g.moveTo(box.x0 + box.w * 0.74, box.y0 + box.h * 0.92);
-    g.lineTo(box.x0 + box.w * 0.34, box.y0 + box.h * 0.06);
-    g.stroke(); g.globalAlpha = 1;
-    // 朱砂腰带（横贯下三分之一）
-    g.fillStyle = C.ember;
-    g.fillRect(box.x0 + box.w * 0.02, box.y0 + box.h * 0.20, box.w * 0.96, box.h * 0.10);
-    // 腰带上两枚金扣
-    g.fillStyle = C.gold;
-    g.beginPath();
-    g.arc(box.x0 + box.w * 0.30, box.y0 + box.h * 0.25, box.w * 0.05, 0, Math.PI * 2);
-    g.arc(box.x0 + box.w * 0.70, box.y0 + box.h * 0.25, box.w * 0.05, 0, Math.PI * 2);
-    g.fill();
-    P.innerShade(C.ochreD, { alpha: 0.42, blurPx: 9 });
-  }, 0);
-
-  // 侧面卡：整张在正面卡之后（z = -0.10），顶低于正面卡领口
-  card('wukong-torso-side', [[-0.26, 1.18], [0.26, 1.18], [0.26, 2.40], [-0.26, 2.40]], (P) => {
-    P.fill(C.ochreD);
-    P.innerShade(C.burnt, { alpha: 0.22, blurPx: 8 });
-  }, -0.10);
-
-  // ---- 头（脸 + 紧贴身后的侧面 + 金箍）---------------------------------------
-  // 头约 1.3 倍自然比例：从 2.46 到 3.40，宽 0.36 半宽。
-  card('wukong-head', [[-0.34, 2.46], [0.34, 2.46], [0.36, 3.18], [0.20, 3.34], [-0.20, 3.34], [-0.36, 3.18]], (P) => {
-    const { g, box } = P;
-    P.fill(C.face);
-    // 桃心脸的下半部（腮）稍暗
-    g.fillStyle = C.faceD; g.globalAlpha = 0.45;
-    g.beginPath();
-    g.ellipse(box.x0 + box.w * 0.5, box.y1 - box.h * 0.16, box.w * 0.34, box.h * 0.16, 0, 0, Math.PI * 2);
-    g.fill(); g.globalAlpha = 1;
-    // 雷公嘴：一道朱砂短弧 + 中线
-    g.strokeStyle = C.burnt; g.lineWidth = 2.4; g.lineCap = 'round';
-    g.beginPath();
-    g.moveTo(box.x0 + box.w * 0.42, box.y1 - box.h * 0.20);
-    g.quadraticCurveTo(box.x0 + box.w * 0.5, box.y1 - box.h * 0.14, box.x0 + box.w * 0.58, box.y1 - box.h * 0.20);
-    g.stroke();
-    // 眼：墨点 + 朱砂眼圈（不画高光，spec BANNED 纯白）
-    g.fillStyle = C.ink;
-    for (const fx of [0.36, 0.64]) {
+  // ── 躯干：赭黄短打 + 朱砂腰带 ───────────────────────────────────────────
+  // 半宽收到 0.42，手臂内缘留在 0.50：正面上手臂永远不压住躯干。
+  card('wukong-torso', [[-0.38, 1.12], [0.38, 1.12], [0.42, 2.10], [0.40, 2.46], [-0.40, 2.46], [-0.42, 2.10]],
+    (P) => {
+      const { g, box } = P;
+      P.fill(C.ochre);
+      // 斜襟：从右肩压到左腰，一道墨线 + 一道朱线
+      g.strokeStyle = C.deep; g.globalAlpha = 0.7; g.lineWidth = 3;
       g.beginPath();
-      g.ellipse(box.x0 + box.w * fx, box.y0 + box.h * 0.52, box.w * 0.075, box.h * 0.10, 0, 0, Math.PI * 2);
-      g.fill();
-    }
-    g.strokeStyle = C.ember; g.lineWidth = 1.6;
-    for (const fx of [0.36, 0.64]) {
-      g.beginPath();
-      g.ellipse(box.x0 + box.w * fx, box.y0 + box.h * 0.52, box.w * 0.13, box.h * 0.15, 0, 0, Math.PI * 2);
+      g.moveTo(box.x0 + box.w * 0.76, box.y0 + box.h * 0.9);
+      g.lineTo(box.x0 + box.w * 0.32, box.y0 + box.h * 0.08);
       g.stroke();
-    }
-    P.innerShade(C.faceD, { alpha: 0.35, blurPx: 7 });
-  }, 0.10);
+      g.strokeStyle = C.ember;
+      g.globalAlpha = 0.5; g.lineWidth = 2;
+      g.beginPath();
+      g.moveTo(box.x0 + box.w * 0.70, box.y0 + box.h * 0.86);
+      g.lineTo(box.x0 + box.w * 0.30, box.y0 + box.h * 0.06);
+      g.stroke();
+      g.globalAlpha = 1;
+      // 胸前纸印的云纹：四个短弧，线宽按卡面尺寸给足
+      g.strokeStyle = C.ochreL; g.globalAlpha = 0.45; g.lineWidth = 2.4;
+      for (let i = 0; i < 3; i++) {
+        const yy = box.y0 + box.h * (0.60 - i * 0.13);
+        g.beginPath();
+        g.arc(box.x0 + box.w * 0.34, yy, box.w * 0.10, Math.PI * 0.15, Math.PI * 0.85);
+        g.stroke();
+      }
+      g.globalAlpha = 1;
+      P.innerShade(C.ember, { alpha: 0.30, blurPx: 9 });
+    }, Z.torso);
 
-  card('wukong-head-side', [[-0.26, 2.52], [0.26, 2.52], [0.26, 3.14], [-0.26, 3.14]], (P) => {
+  card('wukong-torso-side', [[-0.26, 1.18], [0.26, 1.18], [0.26, 2.40], [-0.26, 2.40]], (P) => {
+    P.fill(C.ochre);
+    P.innerShade(C.deep, { alpha: 0.34, blurPx: 8 });
+  }, Z.torsoSide);
+
+  // ── 头：脸 + 身后的侧卡 + 金箍 ─────────────────────────────────────────
+  card('wukong-head', [[-0.34, 2.46], [0.34, 2.46], [0.36, 3.18], [0.20, 3.34], [-0.20, 3.34], [-0.36, 3.18]],
+    (P) => {
+      const { g, box } = P;
+      P.fill(C.face);
+      // 鬓角与下巴：桃心脸的下缘压一道赭
+      g.fillStyle = C.faceD; g.globalAlpha = 0.55;
+      g.beginPath();
+      g.ellipse(box.x0 + box.w * 0.5, box.y1 - box.h * 0.14, box.w * 0.36, box.h * 0.15, 0, 0, Math.PI * 2);
+      g.fill(); g.globalAlpha = 1;
+      // 雷公嘴：一道朱砂短弧
+      g.strokeStyle = C.ember; g.lineWidth = 2.6; g.lineCap = 'round';
+      g.beginPath();
+      g.moveTo(box.x0 + box.w * 0.41, box.y1 - box.h * 0.19);
+      g.quadraticCurveTo(box.x0 + box.w * 0.5, box.y1 - box.h * 0.12, box.x0 + box.w * 0.59, box.y1 - box.h * 0.19);
+      g.stroke();
+      // 眼：墨点 + 朱砂眼圈
+      g.fillStyle = C.deep;
+      for (const fx of [0.35, 0.65]) {
+        g.beginPath();
+        g.ellipse(box.x0 + box.w * fx, box.y0 + box.h * 0.54, box.w * 0.08, box.h * 0.11, 0, 0, Math.PI * 2);
+        g.fill();
+      }
+      g.strokeStyle = C.ember; g.lineWidth = 2;
+      for (const fx of [0.35, 0.65]) {
+        g.beginPath();
+        g.ellipse(box.x0 + box.w * fx, box.y0 + box.h * 0.54, box.w * 0.14, box.h * 0.16, 0, 0, Math.PI * 2);
+        g.stroke();
+      }
+      // 额上的毛尖：三道深褐短笔
+      g.strokeStyle = C.deep; g.lineWidth = 2.6;
+      for (const fx of [0.38, 0.5, 0.62]) {
+        g.beginPath();
+        g.moveTo(box.x0 + box.w * fx, box.y0 + box.h * 0.80);
+        g.lineTo(box.x0 + box.w * fx, box.y0 + box.h * 0.92);
+        g.stroke();
+      }
+      P.innerShade(C.faceD, { alpha: 0.32, blurPx: 7 });
+    }, Z.head);
+
+  card('wukong-head-side', [[-0.26, 2.52], [0.26, 2.52], [0.26, 3.12], [-0.26, 3.12]], (P) => {
     P.fill(C.faceD);
-    P.innerShade(C.ochreD, { alpha: 0.3, blurPx: 7 });
-  }, 0.02);
+    P.innerShade(C.deep, { alpha: 0.3, blurPx: 7 });
+  }, Z.headSide);
 
-  // 金箍：一道金环压在发际（z 最前，压住脸的顶缘）
   card('wukong-crown', [[-0.37, 3.14], [0.37, 3.14], [0.33, 3.28], [-0.33, 3.28]], (P) => {
     const { g, box } = P;
     P.fill(C.gold);
     g.fillStyle = C.ember;
     g.beginPath();
-    g.arc(box.x0 + box.w * 0.5, box.y0 + box.h * 0.5, box.h * 0.34, 0, Math.PI * 2);
+    g.arc(box.x0 + box.w * 0.5, box.y0 + box.h * 0.5, box.h * 0.36, 0, Math.PI * 2);
     g.fill();
-    P.innerShade(C.burnt, { alpha: 0.35, blurPx: 4 });
-  }, 0.20);
-
-  // ---- 手臂（肩枢轴，内缘 0.44 > 躯干 0.42：正面永不压住躯干）--------------------
-  const armPts = [[-0.12, -1.26], [0.12, -1.26], [0.13, 0.06], [-0.13, 0.06]];
-  const armPaint = (P) => {
-    const { g, box } = P;
-    P.fill(C.ochre);
-    g.fillStyle = C.burnt;                       // 袖口
-    g.fillRect(box.x0, box.y0, box.w, box.h * 0.16);
-    g.fillStyle = C.face;                        // 手
+    g.strokeStyle = C.deep; g.globalAlpha = 0.55; g.lineWidth = 2;
     g.beginPath();
-    g.ellipse(box.x0 + box.w * 0.5, box.y1 - box.h * 0.06, box.w * 0.42, box.h * 0.07, 0, 0, Math.PI * 2);
-    g.fill();
-    P.innerShade(C.ochreD, { alpha: 0.4, blurPx: 6 });
-  };
-  const arms = [];
+    g.moveTo(box.x0 + box.w * 0.10, box.y0 + box.h * 0.5);
+    g.lineTo(box.x0 + box.w * 0.90, box.y0 + box.h * 0.5);
+    g.stroke(); g.globalAlpha = 1;
+    P.innerShade(C.deep, { alpha: 0.32, blurPx: 4 });
+  }, Z.crown);
+
+  // ── 披膊：肩上的两片纸甲（静态，挂在 body 上）────────────────────────────
   for (const side of [-1, 1]) {
-    const pivot = new THREE.Group();
-    pivot.name = 'wukong-shoulder-' + (side < 0 ? 'l' : 'r');
-    pivot.position.set(side * 0.60, 2.42, -0.20);   // 层：手臂在躯干之后
-    const m = makeCard(armPts, { ...H.cardOpts(x, z), paint: armPaint, thickness: 0.08, edgeWidth: 0.08, folds: ['top'] });
-    m.name = 'wukong-arm-' + (side < 0 ? 'l' : 'r');
-    pivot.add(m);
-    body.add(pivot);
-    arms.push(pivot);
+    const s = side < 0 ? 'l' : 'r';
+    const pts = side < 0
+      ? [[-0.40, 2.10], [-0.74, 2.16], [-0.70, 2.44], [-0.42, 2.46]]
+      : [[0.40, 2.10], [0.74, 2.16], [0.70, 2.44], [0.42, 2.46]];
+    card('wukong-pauldron-' + s, pts, (P) => {
+      const { g, box } = P;
+      P.fill(C.ember);
+      g.fillStyle = C.emberLit;
+      g.fillRect(box.x0, box.y0 + box.h * 0.58, box.w, box.h * 0.42);
+      g.strokeStyle = C.gold; g.lineWidth = 2.2;
+      g.beginPath();
+      g.moveTo(box.x0, box.y0 + box.h * 0.56);
+      g.lineTo(box.x1, box.y0 + box.h * 0.56);
+      g.stroke();
+      P.innerShade(C.deep, { alpha: 0.34, blurPx: 5 });
+    }, Z.pauldron + side * MZ);
   }
 
-  // ---- 腿（髋枢轴，卡片的顶边在裙下 1.08 < 裙摆 1.12：与躯干无 y 重叠）------------
-  const legPts = [[-0.17, -1.08], [0.17, -1.08], [0.19, -0.02], [-0.19, -0.02]];
-  const legPaint = (P) => {
+  // ── 腰带与虎皮裙 ──────────────────────────────────────────────────────
+  card('wukong-belt', [[-0.44, 1.30], [0.44, 1.30], [0.44, 1.44], [-0.44, 1.44]], (P) => {
     const { g, box } = P;
-    P.fill(C.ink);
-    g.fillStyle = C.ink;
-    g.globalAlpha = 0.75;
-    g.fillRect(box.x0, box.y0, box.w, box.h * 0.18);
-    g.globalAlpha = 1;
-    g.fillStyle = C.ink;                          // 云靴
-    g.fillRect(box.x0 - box.w * 0.06, box.y1 - box.h * 0.14, box.w * 1.12, box.h * 0.14);
-    g.fillStyle = C.ochreD;                       // 靴口的金边
-    g.fillRect(box.x0 - box.w * 0.06, box.y1 - box.h * 0.16, box.w * 1.12, box.h * 0.02);
-    P.innerShade(C.burnt, { alpha: 0.22, blurPx: 5 });
-  };
-  const legs = [];
-  for (const side of [-1, 1]) {
-    const pivot = new THREE.Group();
-    pivot.name = 'wukong-hip-' + (side < 0 ? 'l' : 'r');
-    pivot.position.set(side * 0.20, 1.10, -0.13);   // 层：腿在最最后
-    const m = makeCard(legPts, { ...H.cardOpts(x, z), paint: legPaint, thickness: 0.08, edgeWidth: 0.08, folds: ['top'] });
-    m.name = 'wukong-leg-' + (side < 0 ? 'l' : 'r');
-    pivot.add(m);
-    rig.add(pivot);
-    legs.push(pivot);
-  }
+    P.fill(C.ember);
+    g.fillStyle = C.gold;
+    for (let i = 0; i < 3; i++) {
+      g.beginPath();
+      g.arc(box.x0 + box.w * (0.25 + i * 0.25), box.y0 + box.h * 0.5, box.h * 0.22, 0, Math.PI * 2);
+      g.fill();
+    }
+    P.innerShade(C.deep, { alpha: 0.3, blurPx: 4 });
+  }, Z.belt);
 
-  // ---- 虎皮裙（盖住髋部，压在腿上：z 前于腿、后于躯干正面）--------------------------
   card('wukong-skirt', [[-0.36, 1.02], [0.36, 1.02], [0.40, 1.42], [-0.40, 1.42]], (P) => {
     const { g, box } = P;
-    P.fill(C.ochreD);
-    g.strokeStyle = C.burnt; g.lineWidth = 2;
-    for (let i = 0; i < 5; i++) {                 // 虎纹
-      const fx = box.x0 + box.w * (0.12 + i * 0.19);
+    P.fill(C.ochreL);
+    // 虎纹：五道粗笔，从下缘往上收
+    g.strokeStyle = C.deep; g.lineWidth = 3.2; g.lineCap = 'round';
+    for (let i = 0; i < 5; i++) {
+      const fx = box.x0 + box.w * (0.14 + i * 0.18);
       g.beginPath();
-      g.moveTo(fx, box.y0 + box.h * 0.15);
-      g.quadraticCurveTo(fx + box.w * 0.06, box.y0 + box.h * 0.55, fx, box.y0 + box.h * 0.95);
+      g.moveTo(fx, box.y0 + box.h * 0.12);
+      g.quadraticCurveTo(fx + box.w * 0.05, box.y0 + box.h * 0.5, fx, box.y0 + box.h * 0.9);
       g.stroke();
     }
-    P.innerShade(C.burnt, { alpha: 0.3, blurPx: 6 });
-  }, 0.14);
+    P.innerShade(C.ember, { alpha: 0.26, blurPx: 6 });
+  }, Z.skirt, body, ['bottom']);
 
-  // ---- 金箍棒（斜背在身后，整张在最后）-------------------------------------------
+  // ── 四肢：肩→肘、髋→膝 两级铰链 ────────────────────────────────────────
+  const ARM_W = 0.12, UPPER = 0.60, FORE = 0.58;
+  const arms = [], elbows = [];
+  for (const side of [-1, 1]) {
+    const s = side < 0 ? 'l' : 'r';
+    const shoulder = new THREE.Group();
+    shoulder.name = 'wukong-shoulder-' + s;
+    shoulder.position.set(side * 0.62, 2.40, Z.arm + side * MZ);
+    body.add(shoulder);
+
+    card('wukong-arm-' + s, [[-ARM_W, 0.04], [ARM_W, 0.04], [ARM_W, -UPPER], [-ARM_W, -UPPER]], (P) => {
+      const { g, box } = P;
+      P.fill(C.ochre);
+      g.fillStyle = C.emberLit;                       // 上臂的袖甲
+      g.fillRect(box.x0, box.y0 + box.h * 0.52, box.w, box.h * 0.48);
+      g.strokeStyle = C.gold; g.lineWidth = 2;
+      g.beginPath();
+      g.moveTo(box.x0, box.y0 + box.h * 0.5);
+      g.lineTo(box.x1, box.y0 + box.h * 0.5);
+      g.stroke();
+      P.innerShade(C.deep, { alpha: 0.32, blurPx: 5 });
+    }, 0, shoulder, ['top']);
+
+    const elbow = new THREE.Group();
+    elbow.name = 'wukong-elbow-' + s;
+    elbow.position.set(0, -UPPER, -(T + 0.02));      // 前臂退后一层，弯折时不与前臂(上臂)互穿
+    shoulder.add(elbow);
+
+    card('wukong-forearm-' + s, [[-0.11, 0.02], [0.11, 0.02], [0.11, -FORE], [-0.11, -FORE]], (P) => {
+      const { g, box } = P;
+      P.fill(C.ochre);
+      g.fillStyle = C.ember;                          // 护腕
+      g.fillRect(box.x0, box.y0 + box.h * 0.62, box.w, box.h * 0.38);
+      g.fillStyle = C.paperL;                         // 手
+      g.beginPath();
+      g.ellipse(box.x0 + box.w * 0.5, box.y1 - box.h * 0.07, box.w * 0.46, box.h * 0.08, 0, 0, Math.PI * 2);
+      g.fill();
+      g.strokeStyle = C.deep; g.lineWidth = 2;
+      g.beginPath();
+      g.moveTo(box.x0 + box.w * 0.3, box.y1 - box.h * 0.05);
+      g.lineTo(box.x0 + box.w * 0.5, box.y1 - box.h * 0.02);
+      g.lineTo(box.x0 + box.w * 0.7, box.y1 - box.h * 0.05);
+      g.stroke();
+      P.innerShade(C.deep, { alpha: 0.28, blurPx: 5 });
+    }, 0, elbow, ['top']);
+
+    arms.push(shoulder); elbows.push(elbow);
+  }
+
+  const THIGH = 0.54, SHIN = 0.56;
+  const legs = [], knees = [];
+  for (const side of [-1, 1]) {
+    const s = side < 0 ? 'l' : 'r';
+    const hip = new THREE.Group();
+    hip.name = 'wukong-hip-' + s;
+    hip.position.set(side * 0.20, 1.08, -0.13 + side * MZ);   // 1.08 = 脚底正落在 y=0，不悬空也不入地
+    rig.add(hip);
+
+    card('wukong-thigh-' + s, [[-0.17, -0.02], [0.17, -0.02], [0.17, -THIGH], [-0.17, -THIGH]], (P) => {
+      const { g, box } = P;
+      P.fill(C.deep);
+      g.fillStyle = C.ochreL;                          // 裤上的赭黄条纹
+      g.fillRect(box.x0, box.y0 + box.h * 0.66, box.w, box.h * 0.12);
+      P.innerShade(C.ink, { alpha: 0.3, blurPx: 5 });
+    }, 0, hip, ['top']);
+
+    const knee = new THREE.Group();
+    knee.name = 'wukong-knee-' + s;
+    knee.position.set(0, -THIGH, -(T + 0.02));
+    hip.add(knee);
+
+    card('wukong-shin-' + s, [[-0.17, 0.02], [0.17, 0.02], [0.17, -SHIN], [-0.17, -SHIN]], (P) => {
+      const { g, box } = P;
+      P.fill(C.ink);
+      g.fillStyle = C.deep;                            // 靴筒
+      g.fillRect(box.x0, box.y0, box.w, box.h * 0.42);
+      g.fillStyle = C.ember;                           // 靴口的朱边
+      g.fillRect(box.x0, box.y0 + box.h * 0.38, box.w, box.h * 0.06);
+      g.strokeStyle = C.gold; g.lineWidth = 2;         // 云头
+      g.beginPath();
+      g.arc(box.x0 + box.w * 0.5, box.y1 - box.h * 0.02, box.w * 0.34, Math.PI * 1.05, Math.PI * 1.95);
+      g.stroke();
+      P.innerShade(C.ink, { alpha: 0.2, blurPx: 4 });
+    }, 0, knee, ['top']);
+
+    legs.push(hip); knees.push(knee);
+  }
+
+  // ── 金箍棒：斜背身后，整张在最后 ──────────────────────────────────────
   const staff = new THREE.Group();
   staff.name = 'wukong-staff-holder';
-  staff.position.set(0, 1.95, -0.50);
+  staff.position.set(0, 1.95, Z.staff);
   staff.rotation.z = 0.34;
-  const staffCard = makeCard([[-0.07, -1.62], [0.07, -1.62], [0.07, 1.62], [-0.07, 1.62]],
-    { ...H.cardOpts(x, z), paint: (P) => {
-      P.fill(C.ink);
-      P.g.fillStyle = C.gold;
-      P.g.fillRect(P.box.x0 - P.box.w * 0.08, P.box.y1 - P.box.h * 0.08, P.box.w * 1.16, P.box.h * 0.05);
-      P.g.fillRect(P.box.x0 - P.box.w * 0.08, P.box.y0 + P.box.h * 0.02, P.box.w * 1.16, P.box.h * 0.05);
-    }, thickness: 0.08, edgeWidth: 0.08, folds: ['top', 'bottom'] });
+  const staffCard = makeCard([[-0.07, -1.62], [0.07, -1.62], [0.07, 1.62], [-0.07, 1.62]], {
+    ...opts(),
+    folds: ['top', 'bottom'],
+    paint: (P) => {
+      const { g, box } = P;
+      P.fill(C.deep);
+      g.fillStyle = C.gold;
+      g.fillRect(box.x0 - box.w * 0.1, box.y1 - box.h * 0.07, box.w * 1.2, box.h * 0.055);
+      g.fillRect(box.x0 - box.w * 0.1, box.y0 + box.h * 0.015, box.w * 1.2, box.h * 0.055);
+      g.strokeStyle = C.ember; g.lineWidth = 2.2;
+      g.beginPath();
+      g.moveTo(box.x0 + box.w * 0.5, box.y0 + box.h * 0.12);
+      g.lineTo(box.x0 + box.w * 0.5, box.y1 - box.h * 0.12);
+      g.stroke();
+    },
+  });
   staffCard.name = 'wukong-staff';
   staff.add(staffCard);
   body.add(staff);
 
-  // ---- 步态：步幅按「走过的距离」算，脚不会打滑 ------------------------------------
-  // 一个完整周期 = 2π = 两步；支撑相内腿角与距离成线性（脚钉在地上），摆动相做 smoothstep。
-  const STEP = HERO_H * 0.58 / 2;   // 半步长（世界单位）
-  const LEG = 1.08, ARM = 0.34;
+  // ── 步态 ──────────────────────────────────────────────────────────────
+  // 步幅按走过的距离算（脚不打滑）：一个周期 = 两步，支撑相线性、摆动相 smoothstep。
+  const STEP = HERO_H * 0.58 / 2;
+  const LEG = 1.10, ARM = 0.32;
   const stride = (walked, gait) => {
     const phase = (walked / STEP) * Math.PI;
     const s = Math.sin(phase), c = Math.cos(phase);
-    const A = Math.min(0.5, (gait * STEP * 2) / (2 * LEG));   // 半步长 / 腿长的比值，宽摆时压到 0.5 rad
-    const legAngle = (ph) => {
+    const A = Math.min(0.48, (gait * STEP * 2) / (2 * LEG));
+    const swing = (ph) => {
       const u = (ph / Math.PI) % 2;
-      if (u >= 1) return A * (3 - 2 * u);                      // 支撑相：线性，脚不动
-      const e = u * u * (3 - 2 * u);                           // 摆动相：smoothstep 从后回到前
+      if (u >= 1) return A * (3 - 2 * u);              // 支撑相：脚钉在地上
+      const e = u * u * (3 - 2 * u);
       return A * (2 * e - 1);
     };
-    legs[0].rotation.x = legAngle(phase);
-    legs[1].rotation.x = legAngle(phase + Math.PI);
-    arms[0].rotation.x = -ARM * gait * c;                      // 手臂与腿反相
-    arms[1].rotation.x = ARM * gait * c;
-    body.position.y = 0.033 * HERO_H * gait * Math.abs(s);     // 过步时略高、落脚时最低
-    body.rotation.x = 0.02 * gait * Math.sin(2 * phase - 1.2); // 躯干轻微滞后
-    body.rotation.z = 0.012 * gait * s;                        // 左右轻晃
+    for (let i = 0; i < 2; i++) {
+      const ph = phase + i * Math.PI;
+      legs[i].rotation.x = swing(ph);
+      // 膝只在腿往回收的那半程屈（正角 = 小腿向后折）
+      knees[i].rotation.x = 0.55 * gait * Math.max(0, -Math.sin(ph));
+      const armRot = -ARM * gait * (i === 0 ? c : -c);
+      arms[i].rotation.x = armRot;
+      // 肘只向前屈：手臂朝前摆时带一点折
+      elbows[i].rotation.x = -0.10 + Math.min(0, armRot) * 1.5;   // 常留一点屈，纸偶才不像木棍
+    }
+    body.position.y = 0.033 * HERO_H * gait * Math.abs(s);
+    body.rotation.x = 0.02 * gait * Math.sin(2 * phase - 1.2);
+    body.rotation.z = 0.012 * gait * s;
   };
 
-  // harness 的 setHero 收的是 popup 那样的「铰链句柄」：它每帧动 handle.group（位置、朝向），
-  // 并把 lean/roll 写到 handle.pivot.children[0] 上。自建纸偶要给出同形状的两层：
-  // pivot 是外壳（只承接前倾/侧倾），group 是真正被搬动的那一层。
+  // harness 的 setHero 收「铰链句柄」：pivot 承接前倾/侧倾，group 是被搬动的那一层
   const pivot = new THREE.Group();
   pivot.name = 'wukong-pivot';
   pivot.add(rig);
-  return { handle: { group: rig, pivot }, stride, parts: { body, arms, legs, staff } };
+  return {
+    handle: { group: rig, pivot },
+    stride,
+    parts: { body, arms, elbows, legs, knees, staff },
+  };
 }

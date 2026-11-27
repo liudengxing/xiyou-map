@@ -3,7 +3,14 @@
 > 每轮迭代前先读本文，迭代后必须更新。字段：轮次 / 交付物 / 已知问题 / 环境。
 
 ## 迭代记录
-### 第 44 轮（U-044-01/02/03）国界：从数据层绕开
+### 第 45 轮（2026-11-27）：孙悟空纸偶 v3（铰链版 18 卡）
+
+- `scenes/huoyan/wukong.js` 重写：18 张卡、肩→肘与髋→膝两级转轴（8 个 Group）、配色改用铰链设计图那族。
+- 验收：`cards 158`、`clips []`、`buildMs 443–480ms`、脚底 `y=0.000`、髋反相 0.358/−0.438、膝 0.213/0.535、肘静止 −0.10。
+- 版本：`wukong.js?v=9`、`scene.js?v=45`。
+- 人物观感（像不像参考图）需人工判读，截图 `.tmp/r45-wukong-v3-scene.png` / `-test2.png`。
+
+## 第 44 轮（U-044-01/02/03）国界：从数据层绕开
 - 删 `assets/vendor/countries-110m.json` 与它的 `topojson.mesh` 用法；新增 `china-provinces.json`（DataV，582522 B，35 feature = 34 省级 + 1 条 `100000_JD` 九段线）。
 - 今图层画 `.province` + `.nine-dash`；古图层只有 `.land` 海岸线，`.border` 节点数为 0。关于补「边界」段与「并非测绘成果」声明；README 补边界政策与校验说明。
 - `scripts/check-china.mjs` 并入 `check-all`：feature 数 35 / 省级 34 / 九段线 1 / 台港澳必须在 / 省级地名不得含「国」/ 代码不得再出现 `countries-110m`、`geoBorders` / 必须真的画了 province 与 nine-dash。
