@@ -5,6 +5,7 @@
 
 # 打包产物：本地校验用，入库会变成过期副本
 西游记时序图-小米 vibeCoding 大赛/
+西游记时序图-华为 skill 大赛/
 *.zip
 
 node_modules/
