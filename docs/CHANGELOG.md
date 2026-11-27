@@ -51,3 +51,4 @@
 | 044 | 2026-11-27 14:45 | 删国界数据集，今图层改画 34 个省级轮廓 + 九段线、古图层不画疆域界线；关于补边界声明；新增 check-china 校验 | assets/js/app.js、assets/css/style.css、assets/vendor/china-provinces.json（新增）、assets/vendor/countries-110m.json（删除）、index.html、README.md、scripts/check-china.mjs、scripts/check-all.mjs、docs/* | U-044-01/02/03 |
 | 045 | 2026-11-27 15:05 | 孙悟空纸偶改铰链版：18 张卡、肩肘髋膝四处转轴、配色改用铰链设计图那族 | scenes/huoyan/wukong.js、scenes/huoyan/scene.js、scenes/huoyan/index.html、docs/* | U-045-01/02/03/04 |
 | 046 | 2026-11-27 15:35 | 火焰山加前景纸件：10 组远件 + 6 组近件 + 近地硬边印花，printDetail 0.008→0.044、flatPct 93→63（PASS） | scenes/huoyan/props.js（新增）、scenes/huoyan/scene.js、scenes/huoyan/index.html、docs/* | U-046-01/02/03/04 |
+| 047 | 2026-11-27 15:55 | 时间轴场景签 5 → 8：补两界山「心猿归正」、号山「大战红孩儿」、狮驼国「狮驼岭」，最大空档 38.3 → 21.3 | assets/js/data.js、index.html、docs/* | U-047-01/02 |

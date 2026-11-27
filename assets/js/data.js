@@ -255,10 +255,13 @@ window.XIYOU_DATA = {
      主角是「大闹火焰山」（第五十九至六十一回三调芭蕉扇），纸模场景做的也是这一场。 */
   keyScenes: [
     { id: "tianting", name: "大闹天宫" },
+    { id: "liangjie", name: "心猿归正" },
     { id: "baihu", name: "三打白骨精" },
+    { id: "haoshan", name: "大战红孩儿" },
     { id: "nver", name: "女儿国" },
     { id: "liuer", name: "真假美猴王" },
     { id: "huoyan", name: "大闹火焰山" },
+    { id: "shituo", name: "狮驼岭" },
   ],
 
   journey: [
